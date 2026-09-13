@@ -26,7 +26,7 @@ export const GlobalHeader: React.FC<IGlobalHeaderProps> = ({ context }) => {
     const fetchNav = async () => {
       try {
         const service = new GlobalNavigationService(context);
-        
+
         // Load the root web's title and logo
         const rootWeb = await service.getRootWebInfo();
         if (rootWeb) {
@@ -53,7 +53,7 @@ export const GlobalHeader: React.FC<IGlobalHeaderProps> = ({ context }) => {
           <SiteBranding title={siteTitle} logoUrl={siteLogoUrl} />
           <div className={styles.navigationSection}>
             {loading ? (
-              <span className={styles.loadingText}>Loading navigation...</span>
+              <span className={styles.loadingText}>...</span>
             ) : error ? (
               <span className={styles.errorText}>Unable to load global navigation.</span>
             ) : (
