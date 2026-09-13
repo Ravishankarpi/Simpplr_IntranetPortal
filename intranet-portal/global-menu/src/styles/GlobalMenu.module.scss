@@ -1,0 +1,204 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.globalHeaderContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 60px;
+  background-color: var(--bodyBackground);
+  color: var(--bodyText);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 0 20px;
+  box-sizing: border-box;
+}
+
+.leftAndMiddle {
+  display: flex;
+  align-items: center;
+}
+
+.siteBranding {
+  display: flex;
+  align-items: center;
+  margin-right: 16px; // Minimal gap as requested
+}
+
+.siteLogo {
+  height: 32px;
+  max-width: 120px;
+  margin-right: 8px;
+}
+
+.siteLogoFallback {
+  margin-right: 8px;
+}
+
+.siteTitle {
+  font-size: 18px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.navigationSection {
+  display: flex;
+  align-items: center;
+}
+
+.globalNavigation {
+  display: flex;
+  align-items: center;
+}
+
+.topLevelItem {
+  position: relative;
+}
+
+.subMenuContainer {
+  min-width: 250px;
+  background-color: var(--bodyBackground);
+  border: 1px solid var(--neutralLight);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 8px 0;
+}
+
+.subMenuSearch {
+  padding: 0 16px 8px 16px;
+  border-bottom: 1px solid var(--neutralLight);
+  margin-bottom: 8px;
+}
+
+.subMenuList {
+  max-height: 400px;
+  overflow-y: auto;
+  justify-items: start;
+}
+
+.menuItemWrapper {
+  position: relative;
+}
+
+.menuItemButton {
+  width: 100%;
+  text-align: left;
+  padding: 0 16px;
+  height: 40px;
+
+  &:hover {
+    background-color: var(--neutralLighter);
+  }
+}
+
+.nestedMenu {
+  padding-left: 16px;
+  background-color: var(--neutralLighterAlt);
+  justify-items: start;
+}
+
+.noResults {
+  padding: 16px;
+  color: var(--neutralSecondary);
+  text-align: center;
+  font-style: italic;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+}
+
+.globalSearchContainer {
+  width: 300px;
+  position: relative;
+}
+
+.globalSearchBox {
+  width: 100%;
+  height: 40px;
+  border-radius: 15px;
+  border-color: lightgray;
+}
+
+.searchCallout {
+  width: 300px;
+  max-width: 100%;
+}
+
+.searchPanel {
+  padding: 16px;
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+.searchSection {
+  margin-bottom: 16px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.searchSectionTitle {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--neutralSecondary);
+  margin-bottom: 8px;
+}
+
+.searchList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.searchListItem {
+  display: flex;
+  align-items: center;
+  padding: 8px;
+  cursor: pointer;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: var(--neutralLighter);
+  }
+}
+
+.searchIcon {
+  margin-right: 12px;
+  font-size: 16px;
+  color: var(--neutralSecondary);
+}
+
+.searchText {
+  font-size: 14px;
+  color: var(--neutralPrimary);
+}
+
+.loadingText,
+.errorText {
+  padding: 0 16px;
+  color: var(--neutralSecondary);
+}
+
+.errorText {
+  color: var(--errorText, #a4262c);
+}
+
+:global {
+
+  /* HIDE SHAREPOINT ELEMENTS */
+  body.hide-sp-elements #spLeftNav,
+  body.hide-sp-elements #spSiteHeader,
+  body.hide-sp-elements #CommentsWrapper,
+  body.hide-sp-elements #sp-appBar {
+    display: none !important;
+  }
+
+  body.hide-sp-elements:not(.is-edit-mode) #spCommandBar {
+    display: none !important;
+  }
+
+  body.hide-sp-elements.is-edit-mode #spCommandBar {
+    display: block !important;
+  }
+
+}

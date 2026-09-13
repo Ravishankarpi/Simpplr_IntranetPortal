@@ -1,0 +1,18 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx-build/config.2.0.schema.json",
+  "version": "2.0",
+  "bundles": {
+    "intranet-portal-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/intranetPortal/IntranetPortalWebPart.js",
+          "manifest": "./src/webparts/intranetPortal/IntranetPortalWebPart.manifest.json"
+        }
+      ]
+    }
+  },
+  "externals": {},
+  "localizedResources": {
+    "IntranetPortalWebPartStrings": "lib/webparts/intranetPortal/loc/{locale}.js"
+  }
+}

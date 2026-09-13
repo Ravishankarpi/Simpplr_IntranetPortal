@@ -1,0 +1,173 @@
+@import '~@fluentui/react/dist/sass/References.scss';
+
+.headerContainer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  height: 64px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 4px -1px rgba(0,0,0,0.1), 0 4px 5px 0 rgba(0,0,0,0.06), 0 1px 10px 0 rgba(0,0,0,0.04);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.searchSection {
+  flex: 1;
+  max-width: 400px;
+  
+  /* Material-like search override */
+  :global(.ms-SearchBox) {
+    border-radius: 24px;
+    background-color: #f1f3f4;
+    border: none;
+    height: 48px;
+    
+    &:hover, &:focus-within {
+      background-color: #ffffff;
+      box-shadow: 0 1px 6px rgba(32,33,36,0.28);
+      border: none;
+    }
+    
+    :global(.ms-SearchBox-iconContainer) {
+      color: #5f6368;
+    }
+    
+    :global(.ms-SearchBox-field) {
+      font-size: 16px;
+    }
+  }
+}
+
+.navSection {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.navItem {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 0 16px;
+  color: #5f6368;
+  font-weight: 500;
+  font-size: 15px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  border-radius: 8px;
+  margin: 8px 0; /* Add some vertical margin so the hover state doesn't stretch full height if not desired, or keep height 100% and no margin */
+
+  /* Override default a tag styles */
+  a {
+    color: inherit;
+    text-decoration: none !important;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:hover {
+    background-color: #f1f3f4;
+    color: #1a73e8;
+  }
+}
+
+.dropdownMenu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  background: #ffffff;
+  min-width: 220px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  border: 1px solid #f1f3f4;
+  display: none;
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 1001;
+  transform-origin: top left;
+  animation: dropdownFade 0.2s ease;
+
+  &.show {
+    display: flex;
+  }
+}
+
+@keyframes dropdownFade {
+  from { opacity: 0; transform: translateY(-8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dropdownItemWrapper {
+  position: relative;
+  width: 100%;
+}
+
+.dropdownItem {
+  padding: 10px 20px;
+  color: #3c4043;
+  text-decoration: none !important;
+  font-size: 14px;
+  font-weight: 400;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.15s ease, color 0.15s ease;
+
+  /* Override default a tag styles */
+  &, &:visited, &:hover, &:active {
+    color: inherit;
+  }
+
+  &:hover {
+    background-color: #e8f0fe; /* Material blue light hover */
+    color: #1a73e8;
+  }
+}
+
+.subDropdownMenu {
+  position: absolute;
+  top: -8px; /* Align with parent item considering the 8px padding of the menu */
+  left: 100%;
+  margin-left: 2px;
+  background: #ffffff;
+  min-width: 220px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08), 0 1px 3px rgba(0,0,0,0.05);
+  border-radius: 8px;
+  border: 1px solid #f1f3f4;
+  display: none;
+  flex-direction: column;
+  padding: 8px 0;
+  animation: dropdownFade 0.2s ease;
+}
+
+.dropdownItemWrapper:hover > .subDropdownMenu {
+  display: flex;
+}
+
+.rightSection {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.notificationIcon {
+  cursor: pointer;
+  font-size: 20px;
+  color: #5f6368;
+  padding: 8px;
+  border-radius: 50%;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: rgba(0,0,0,0.04);
+  }
+}
