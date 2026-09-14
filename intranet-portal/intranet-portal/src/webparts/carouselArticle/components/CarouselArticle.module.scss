@@ -1,34 +1,109 @@
-@import '~@fluentui/react/dist/sass/References.scss';
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .carouselArticle {
   overflow: hidden;
-  padding: 1em;
+  padding: 1em 0; /* Removing side padding to allow full width arrows if needed */
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
+  font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
-.welcome {
-  text-align: center;
-}
-
-.welcomeImage {
+.mySwiper {
   width: 100%;
-  max-width: 420px;
+  padding-bottom: 20px; 
 }
 
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+.swiperSlide {
+  display: flex;
+  justify-content: center;
+  height: auto; /* ensure all cards stretch to same height */
+}
 
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
-    }
+.card {
+  width: 100%;
+  border-radius: 0;
+  overflow: hidden;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  background-color: "[theme:bodyBackground, default: #ffffff]";
+  display: flex;
+  text-decoration: none;
+  color: inherit;
+  flex-direction: column;
+  height: 100%; /* Stretch to fill slide height */
+  transition: transform 0.2s ease-in-out;
+  
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
   }
+}
+
+.imageContainer {
+  width: 100%;
+  /* Removed flex-grow so the image stays at the defined height */
+  min-height: 220px; /* Base height for the image */
+  background-color: #f3f2f1;
+  position: relative;
+  
+  img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.cardContent {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1; /* Allow the content area to stretch so cards match height */
+  gap: 6px;
+  background-color: #ffffff; /* Ensure bottom area is white */
+  min-height: 90px; /* Ensure enough space for two lines of text */
+}
+
+.title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #201f1e;
+  line-height: 1.4;
+  /* limit to 2 lines */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.metaData {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  font-size: 12px;
+  color: #605e5c;
+  line-height: 1.4;
+}
+
+/* Make swiper navigation buttons look like the dark circle with arrows in the screenshot */
+:global(.swiper-button-next),
+:global(.swiper-button-prev) {
+  background-color: rgba(0, 0, 0, 0.7);
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 50%;
+  color: white !important;
+}
+
+:global(.swiper-button-next::after),
+:global(.swiper-button-prev::after) {
+  font-size: 14px !important;
+  font-weight: bold;
 }

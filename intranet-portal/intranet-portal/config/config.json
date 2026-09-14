@@ -25,12 +25,22 @@
           "manifest": "./src/webparts/latestPopularArticle/LatestPopularArticleWebPart.manifest.json"
         }
       ]
+    },
+    "site-about-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/siteAbout/SiteAboutWebPart.js",
+          "manifest": "./src/webparts/siteAbout/SiteAboutWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
     "IntranetPortalWebPartStrings": "lib/webparts/intranetPortal/loc/{locale}.js",
     "CarouselArticleWebPartStrings": "lib/webparts/carouselArticle/loc/{locale}.js",
-    "LatestPopularArticleWebPartStrings": "lib/webparts/latestPopularArticle/loc/{locale}.js"
+    "LatestPopularArticleWebPartStrings": "lib/webparts/latestPopularArticle/loc/{locale}.js",
+    "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
+    "SiteAboutWebPartStrings": "lib/webparts/siteAbout/loc/{locale}.js"
   }
 }
