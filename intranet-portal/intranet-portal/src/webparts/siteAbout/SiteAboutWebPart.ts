@@ -2,8 +2,7 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
-  type IPropertyPaneConfiguration,
-  PropertyPaneTextField
+  type IPropertyPaneConfiguration
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -11,9 +10,13 @@ import { IReadonlyTheme } from '@microsoft/sp-component-base';
 import * as strings from 'SiteAboutWebPartStrings';
 import SiteAbout from './components/SiteAbout';
 import { ISiteAboutProps } from './components/ISiteAboutProps';
+import { getSP } from '../../shared/pnpjsConfig';
+import { PropertyFieldPeoplePicker, PrincipalType } from '@pnp/spfx-property-controls/lib/PropertyFieldPeoplePicker';
 
 export interface ISiteAboutWebPartProps {
-  description: string;
+  customOwners: any[];
+  customMembers: any[];
+  customVisitors: any[];
 }
 
 export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWebPartProps> {
@@ -25,38 +28,41 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
     const element: React.ReactElement<ISiteAboutProps> = React.createElement(
       SiteAbout,
       {
-        description: this.properties.description,
         isDarkTheme: this._isDarkTheme,
         environmentMessage: this._environmentMessage,
         hasTeamsContext: !!this.context.sdks.microsoftTeams,
-        userDisplayName: this.context.pageContext.user.displayName
+        userDisplayName: this.context.pageContext.user.displayName,
+        customOwners: this.properties.customOwners || [],
+        customMembers: this.properties.customMembers || [],
+        customVisitors: this.properties.customVisitors || [],
+        context: this.context
       }
     );
 
     ReactDom.render(element, this.domElement);
   }
 
-  protected onInit(): Promise<void> {
+  protected async onInit(): Promise<void> {
+    getSP(this.context);
+
     return this._getEnvironmentMessage().then(message => {
       this._environmentMessage = message;
     });
   }
 
-
-
   private _getEnvironmentMessage(): Promise<string> {
-    if (!!this.context.sdks.microsoftTeams) { // running in Teams, office.com or Outlook
+    if (!!this.context.sdks.microsoftTeams) { 
       return this.context.sdks.microsoftTeams.teamsJs.app.getContext()
         .then(context => {
           let environmentMessage: string = '';
           switch (context.app.host.name) {
-            case 'Office': // running in Office
+            case 'Office': 
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOffice : strings.AppOfficeEnvironment;
               break;
-            case 'Outlook': // running in Outlook
+            case 'Outlook': 
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentOutlook : strings.AppOutlookEnvironment;
               break;
-            case 'Teams': // running in Teams
+            case 'Teams': 
             case 'TeamsModern':
               environmentMessage = this.context.isServedFromLocalhost ? strings.AppLocalEnvironmentTeams : strings.AppTeamsTabEnvironment;
               break;
@@ -77,16 +83,13 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
     }
 
     this._isDarkTheme = !!currentTheme.isInverted;
-    const {
-      semanticColors
-    } = currentTheme;
+    const { semanticColors } = currentTheme;
 
     if (semanticColors) {
       this.domElement.style.setProperty('--bodyText', semanticColors.bodyText || null);
       this.domElement.style.setProperty('--link', semanticColors.link || null);
       this.domElement.style.setProperty('--linkHovered', semanticColors.linkHovered || null);
     }
-
   }
 
   protected onDispose(): void {
@@ -102,14 +105,44 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
       pages: [
         {
           header: {
-            description: strings.PropertyPaneDescription
+            description: "Site About Configuration"
           },
           groups: [
             {
-              groupName: strings.BasicGroupName,
+              groupName: "Custom Personnel (Overrides SP Groups)",
               groupFields: [
-                PropertyPaneTextField('description', {
-                  label: strings.DescriptionFieldLabel
+                PropertyFieldPeoplePicker('customOwners', {
+                  label: 'Custom Owners',
+                  initialData: this.properties.customOwners,
+                  allowDuplicate: false,
+                  principalType: [PrincipalType.Users],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context as any,
+                  properties: this.properties,
+                  searchTextLimit: 5,
+                  key: 'peopleFieldOwnersId'
+                }),
+                PropertyFieldPeoplePicker('customMembers', {
+                  label: 'Custom Members',
+                  initialData: this.properties.customMembers,
+                  allowDuplicate: false,
+                  principalType: [PrincipalType.Users],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context as any,
+                  properties: this.properties,
+                  searchTextLimit: 5,
+                  key: 'peopleFieldMembersId'
+                }),
+                PropertyFieldPeoplePicker('customVisitors', {
+                  label: 'Custom Visitors',
+                  initialData: this.properties.customVisitors,
+                  allowDuplicate: false,
+                  principalType: [PrincipalType.Users],
+                  onPropertyChange: this.onPropertyPaneFieldChanged,
+                  context: this.context as any,
+                  properties: this.properties,
+                  searchTextLimit: 5,
+                  key: 'peopleFieldVisitorsId'
                 })
               ]
             }

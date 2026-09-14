@@ -1,34 +1,109 @@
-@import '~@fluentui/react/dist/sass/References.scss';
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .siteAbout {
-  overflow: hidden;
   padding: 1em;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
+  font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  background-color: "[theme:bodyBackground, default: #ffffff]";
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+  border-radius: 8px;
+  
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
-.welcome {
-  text-align: center;
+.header {
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e1dfdd;
 }
 
-.welcomeImage {
-  width: 100%;
-  max-width: 420px;
+.title {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #201f1e;
 }
 
-.links {
-  a {
-    text-decoration: none;
-    color: "[theme:link, default:#03787c]";
-    color: var(--link); // note: CSS Custom Properties support is limited to modern browsers only
+.description {
+  font-size: 14px;
+  color: #605e5c;
+  line-height: 1.5;
+  margin: 0;
+}
 
-    &:hover {
-      text-decoration: underline;
-      color: "[theme:linkHovered, default: #014446]";
-      color: var(--linkHovered); // note: CSS Custom Properties support is limited to modern browsers only
+.personnelSection {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.groupTitle {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0;
+  color: #323130;
+  border-left: 4px solid #0078d4;
+  padding-left: 10px;
+}
+
+.userList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.userCard {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #f3f2f1;
+  padding: 8px 12px;
+  border-radius: 4px;
+  width: 250px;
+  
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: #0078d4;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 12px;
+    object-fit: cover;
+  }
+  
+  .userInfo {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    
+    .userName {
+      font-size: 14px;
+      font-weight: 600;
+      color: #323130;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .userEmail {
+      font-size: 12px;
+      color: #605e5c;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
   }
 }

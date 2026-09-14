@@ -5,6 +5,7 @@ import "@pnp/sp/sites";
 import "@pnp/sp/lists";
 import "@pnp/sp/items";
 import "@pnp/sp/search";
+import "@pnp/sp/site-groups";
 
 let _sp: SPFI;
 
