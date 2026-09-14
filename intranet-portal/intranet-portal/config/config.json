@@ -9,10 +9,28 @@
           "manifest": "./src/webparts/intranetPortal/IntranetPortalWebPart.manifest.json"
         }
       ]
+    },
+    "carousel-article-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/carouselArticle/CarouselArticleWebPart.js",
+          "manifest": "./src/webparts/carouselArticle/CarouselArticleWebPart.manifest.json"
+        }
+      ]
+    },
+    "latest-popular-article-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/latestPopularArticle/LatestPopularArticleWebPart.js",
+          "manifest": "./src/webparts/latestPopularArticle/LatestPopularArticleWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
   "localizedResources": {
-    "IntranetPortalWebPartStrings": "lib/webparts/intranetPortal/loc/{locale}.js"
+    "IntranetPortalWebPartStrings": "lib/webparts/intranetPortal/loc/{locale}.js",
+    "CarouselArticleWebPartStrings": "lib/webparts/carouselArticle/loc/{locale}.js",
+    "LatestPopularArticleWebPartStrings": "lib/webparts/latestPopularArticle/loc/{locale}.js"
   }
 }
