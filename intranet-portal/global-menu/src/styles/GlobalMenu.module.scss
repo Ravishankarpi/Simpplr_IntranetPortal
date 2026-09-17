@@ -187,18 +187,18 @@
 
   /* HIDE SHAREPOINT ELEMENTS */
   // body.hide-sp-elements #spLeftNav,
-  // body.hide-sp-elements #spSiteHeader,
-  // body.hide-sp-elements #CommentsWrapper,
-  // body.hide-sp-elements #sp-appBar {
-  //   display: none !important;
-  // }
+  body.hide-sp-elements #spSiteHeader,
+  body.hide-sp-elements #CommentsWrapper,
+  body.hide-sp-elements #sp-appBar {
+    display: none !important;
+  }
 
-  // body.hide-sp-elements:not(.is-edit-mode) #spCommandBar {
-  //   display: none !important;
-  // }
+  body.hide-sp-elements:not(.is-edit-mode) #spCommandBar {
+    display: none !important;
+  }
 
-  // body.hide-sp-elements.is-edit-mode #spCommandBar {
-  //   display: block !important;
-  // }
+  body.hide-sp-elements.is-edit-mode #spCommandBar {
+    display: block !important;
+  }
 
 }

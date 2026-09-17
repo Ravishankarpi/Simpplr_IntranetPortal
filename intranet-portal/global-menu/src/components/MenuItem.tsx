@@ -28,7 +28,7 @@ export const MenuItem: React.FC<IMenuItemProps> = ({ item, onDismiss }) => {
     <CommandBarButton
       className={styles.menuItemButton}
       styles={{
-        root: { width: '100%', padding: '0 16px', height: '40px', background: 'transparent' },
+        root: { width: '100%', padding: '0 16px', height: '40px', background: 'transparent', justifyContent: 'start' },
         rootHovered: { background: 'var(--neutralLighter)' },
         flexContainer: { justifyContent: 'flex-start' }
       }}
