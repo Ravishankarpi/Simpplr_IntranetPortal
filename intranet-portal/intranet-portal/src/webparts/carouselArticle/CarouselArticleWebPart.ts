@@ -5,7 +5,8 @@ import {
   type IPropertyPaneConfiguration,
   PropertyPaneDropdown,
   PropertyPaneSlider,
-  PropertyPaneToggle
+  PropertyPaneToggle,
+  PropertyPaneTextField
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -32,6 +33,7 @@ export interface ICarouselArticleWebPartProps {
   showPostedBy: boolean;
   showSites: string[];
   carouselItemHeight: number;
+  backgroundColor: string;
 }
 
 export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarouselArticleWebPartProps> {
@@ -63,6 +65,7 @@ export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarou
         showPostedBy: this.properties.showPostedBy !== undefined ? this.properties.showPostedBy : true,
         showSites: Array.isArray(this.properties.showSites) ? this.properties.showSites : (this.properties.showSites ? [this.properties.showSites as any] : []),
         carouselItemHeight: this.properties.carouselItemHeight || 150,
+        backgroundColor: this.properties.backgroundColor || '',
         context: this.context
       }
     );
@@ -157,6 +160,11 @@ export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarou
                 PropertyPaneSlider('carouselItemHeight', {
                   label: "Carousel Banner Height (px)",
                   min: 100, max: 500, step: 10, value: 150
+                }),
+                PropertyPaneTextField('backgroundColor', {
+                  label: "Background Color",
+                  description: "Enter a CSS color (e.g. #e3f2fd, lightblue, rgba(0,0,0,0.1)). Leave empty for transparent.",
+                  placeholder: "transparent"
                 })
               ]
             },

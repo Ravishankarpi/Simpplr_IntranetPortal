@@ -17,5 +17,7 @@ export interface ICarouselArticleProps {
   showSites: string[];
   carouselItemHeight: number;
   context: any;
+  backgroundColor?: string;
 }
+
 

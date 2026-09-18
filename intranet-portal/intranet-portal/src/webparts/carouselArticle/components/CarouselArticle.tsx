@@ -42,12 +42,11 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
       let siteUrls = [];
       if (this.props.siteSelection === 'All') {
         const allSites = await SPService.getAllSubSites();
-        siteUrls = allSites.map(s => s.Url);
+        siteUrls = allSites.map((s: any) => s.Url);
       } else {
         if (this.props.showSites && this.props.showSites.length > 0) {
           siteUrls = [...this.props.showSites];
         } else {
-          // Default to root if no input added
           siteUrls = [ROOT_SITE_URL];
         }
       }
@@ -85,10 +84,13 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
     const slidesView = slideShowCount || 3;
 
     return (
-      <section className={styles.carouselArticle}>
+      <section
+        className={styles.carouselArticle}
+        style={{ backgroundColor: this.props.backgroundColor || 'transparent' }}
+      >
         <Swiper
           slidesPerView={slidesView}
-          spaceBetween={20}
+          spaceBetween={16}
           loop={true}
           autoplay={{
             delay: delay,
@@ -100,36 +102,36 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
           className={styles.mySwiper}
         >
           {this.state.pages.map((page, idx) => {
-            const dateStr = new Date(page.PublishedDate).toLocaleDateString('en-US', {
-              month: 'short', day: 'numeric', year: 'numeric'
-            });
-            // Build the metadata string dynamically based on toggles
+            const dateStr = page.PublishedDate
+              ? new Date(page.PublishedDate).toLocaleDateString('en-US', {
+                  month: 'short', day: 'numeric', year: 'numeric'
+                })
+              : '';
+
             let metaString = '';
-            if (showSiteName && page.SiteName) {
-              metaString += `In ${page.SiteName}`;
-            }
-            if (showPostedBy && page.Author) {
-              metaString += `${metaString ? ' ' : ''}by ${page.Author}`;
-            }
-            if (showPublishedAt && page.PublishedDate) {
-              metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
-            }
+            if (showSiteName && page.SiteName) metaString += `In ${page.SiteName}`;
+            if (showPostedBy && page.Author) metaString += `${metaString ? ' ' : ''}by ${page.Author}`;
+            if (showPublishedAt && page.PublishedDate) metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
 
             return (
               <SwiperSlide key={idx} className={styles.swiperSlide}>
                 <a href={page.Url} target="_blank" rel="noopener noreferrer" className={styles.card}>
                   {showBanner && (
-                    <div className={styles.imageContainer} style={{ minHeight: `${this.props.carouselItemHeight || 150}px` }}>
-                      <img src={page.BannerImageUrl || 'https://via.placeholder.com/400x200?text=No+Image'} alt="Banner" />
+                    <div
+                      className={styles.imageContainer}
+                      style={{ minHeight: `${this.props.carouselItemHeight || 150}px` }}
+                    >
+                      <img
+                        src={page.BannerImageUrl || 'https://via.placeholder.com/400x225?text=No+Image'}
+                        alt={page.Title || 'Article'}
+                      />
                     </div>
                   )}
-                  <div className={styles.cardContent} style={{ backgroundColor: '#e4dede' }}>
+                  <div className={styles.cardContent}>
                     {showTitle && <h3 className={styles.title} title={page.Title}>{page.Title}</h3>}
                     <div className={styles.metaData} title={metaString}>
                       {showSiteName && page.SiteName && (
-                        <span>
-                          In <strong style={{ color: 'var(--link, #0078d4)' }}>{page.SiteName}</strong>
-                        </span>
+                        <span>In <strong style={{ color: 'var(--link, #0078d4)' }}>{page.SiteName}</strong></span>
                       )}
                       {(showPostedBy || showPublishedAt) && (
                         <span>
@@ -139,6 +141,15 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
                         </span>
                       )}
                     </div>
+                  </div>
+                  <div className={styles.cardFooter}>
+                    <span
+                      className={styles.cardAction}
+                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                    >
+                      Share
+                    </span>
+                    <span className={styles.cardAction}>Learn more</span>
                   </div>
                 </a>
               </SwiperSlide>
