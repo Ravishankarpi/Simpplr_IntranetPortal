@@ -1,17 +1,18 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
 .latestPopularArticle {
-  padding: 1em 0;
+  padding: 0;
+  margin: 0;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
   font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
-  
+
   &.teams {
     font-family: $ms-font-family-fallbacks;
   }
 }
 
-/* Sorting Buttons */
+/* ─── Sort dropdown ─────────────────────────────── */
 .sortButtonGroup {
   display: flex;
   gap: 8px;
@@ -29,41 +30,40 @@
   color: #323130;
   transition: all 0.2s;
 
-  &:hover {
-    background-color: #e1dfdd;
-  }
+  &:hover { background-color: #e1dfdd; }
 }
 
 .sortButtonActive {
   background-color: #323130;
   color: #ffffff;
 
-  &:hover {
-    background-color: #201f1e;
-  }
+  &:hover { background-color: #201f1e; }
 }
 
-/* Common Card Styles */
+/* ─── Shared card ─────────────────────────────── */
 .card {
-  border-radius: 0;
+  border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
-  background-color: "[theme:bodyBackground, default: #ffffff]";
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+  background-color: #ffffff;
   display: flex;
+  flex-direction: column;
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s ease-in-out;
-  
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.18);
   }
 }
 
 .imageContainer {
-  background-color: #f3f2f1;
+  background-color: #e8e8e8;
   position: relative;
-  
+  width: 100%;
+  padding-top: 56%;
+
   img {
     position: absolute;
     top: 0;
@@ -71,22 +71,24 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border-radius: 12px 12px 0 0;
   }
 }
 
 .cardContent {
-  padding: 16px 20px;
+  padding: 14px 16px 8px;
   display: flex;
   flex-direction: column;
   gap: 6px;
-  background-color: #e4dede;
+  flex-grow: 1;
+  background-color: #ffffff;
 }
 
 .title {
   margin: 0;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 600;
-  color: #201f1e;
+  color: #1a1a1a;
   line-height: 1.4;
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -95,16 +97,37 @@
 }
 
 .metaData {
+  font-size: 12px;
+  color: #757575;
+  line-height: 1.5;
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
   overflow: hidden;
-  font-size: 12px;
-  color: #605e5c;
-  line-height: 1.4;
 }
 
-/* LIST VIEW */
+.cardFooter {
+  display: flex;
+  justify-content: space-between;
+  padding: 8px 16px 14px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: auto;
+}
+
+.cardAction {
+  font-size: 13px;
+  font-weight: 500;
+  color: #1976d2;
+  cursor: pointer;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+
+  &:hover { text-decoration: underline; }
+}
+
+/* ─── LIST VIEW ─────────────────────────────────── */
 .listView {
   display: flex;
   flex-direction: column;
@@ -112,13 +135,17 @@
 
   .card {
     flex-direction: row;
+    border-radius: 8px;
     height: 90px;
   }
 
   .imageContainer {
     width: 120px;
     min-width: 120px;
-    height: 100%;
+    padding-top: 0;
+    height: 90px;
+
+    img { border-radius: 8px 0 0 8px; }
   }
 
   .cardContent {
@@ -126,45 +153,118 @@
     justify-content: center;
     padding: 10px 14px;
   }
-  
+
+  .cardFooter { display: none; }
+
   @media (max-width: 600px) {
-    .card {
-      height: 80px;
-    }
-    .imageContainer {
-      width: 90px;
-      min-width: 90px;
-    }
-    .cardContent {
-      padding: 8px 10px;
-    }
-    .title {
-      font-size: 14px;
-    }
-    .metaData {
-      font-size: 11px;
-    }
+    .card { height: 80px; }
+    .imageContainer { width: 90px; min-width: 90px; }
+    .cardContent { padding: 8px 10px; }
+    .title { font-size: 14px; }
+    .metaData { font-size: 11px; }
   }
 }
 
-/* ROW VIEW */
+/* ─── ROW / GRID VIEW ──────────────────────────── */
 .rowView {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
 
-  .card {
-    flex-direction: column;
-    height: 100%;
+  .card { height: 100%; }
+
+  .imageContainer { width: 100%; }
+
+  .cardContent { flex-grow: 1; padding: 12px 14px; }
+}
+
+/* ─── CAROUSEL VIEW ─────────────────────────────── */
+.carouselWrapper {
+  position: relative;
+  background-color: #e3f2fd;
+  border-radius: 18px;
+  padding: 24px 64px;
+  user-select: none;
+}
+
+.carouselTrackOuter {
+  overflow: hidden;
+  width: 100%;
+}
+
+.carouselTrack {
+  display: flex;
+  gap: 16px;
+  transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
+}
+
+.carouselItem {
+  flex-shrink: 0;
+}
+
+/* MUI-style circular nav buttons */
+.carouselBtn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background-color: #1976d2;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22);
+  z-index: 10;
+  transition: background-color 0.2s, transform 0.2s;
+
+  &:hover {
+    background-color: #1565c0;
+    transform: translateY(-50%) scale(1.08);
   }
 
-  .imageContainer {
-    width: 100%;
-    min-height: 120px;
+  &:disabled {
+    background-color: #b0bec5;
+    cursor: not-allowed;
+    transform: translateY(-50%) scale(1);
   }
 
-  .cardContent {
-    flex-grow: 1;
-    padding: 12px 14px;
+  svg {
+    fill: #ffffff;
+    width: 22px;
+    height: 22px;
+    display: block;
   }
+}
+
+.carouselBtnPrev { left: 10px; }
+.carouselBtnNext { right: 10px; }
+
+/* Dot indicators */
+.carouselDots {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.carouselDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #90caf9;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: background-color 0.25s, width 0.3s;
+}
+
+.activeDot {
+  background-color: #1976d2;
+  width: 24px;
+  border-radius: 4px;
 }
