@@ -88,19 +88,28 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
         className={styles.carouselArticle}
         style={{ backgroundColor: this.props.backgroundColor || 'transparent' }}
       >
-        <Swiper
-          slidesPerView={slidesView}
-          spaceBetween={16}
-          loop={true}
-          autoplay={{
-            delay: delay,
-            disableOnInteraction: false,
-          }}
-          pagination={{ clickable: true }}
-          navigation={true}
-          modules={[Autoplay, Pagination, Navigation]}
-          className={styles.mySwiper}
-        >
+        {/* ── Top space: Web Part Title ── */}
+        {this.props.webPartTitle && (
+          <div className={styles.webPartTitleBar}>
+            <h2 className={styles.webPartTitle}>{this.props.webPartTitle}</h2>
+          </div>
+        )}
+
+        {/* ── Carousel track with side nav zones ── */}
+        <div className={styles.carouselContainer}>
+          <Swiper
+            slidesPerView={slidesView}
+            spaceBetween={16}
+            loop={true}
+            autoplay={{
+              delay: delay,
+              disableOnInteraction: false,
+            }}
+            pagination={{ clickable: true }}
+            navigation={true}
+            modules={[Autoplay, Pagination, Navigation]}
+            className={styles.mySwiper}
+          >
           {this.state.pages.map((page, idx) => {
             const dateStr = page.PublishedDate
               ? new Date(page.PublishedDate).toLocaleDateString('en-US', {
@@ -156,6 +165,7 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
             );
           })}
         </Swiper>
+        </div>
       </section>
     );
   }

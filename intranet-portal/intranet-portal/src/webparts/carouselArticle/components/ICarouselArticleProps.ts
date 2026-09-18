@@ -18,6 +18,8 @@ export interface ICarouselArticleProps {
   carouselItemHeight: number;
   context: any;
   backgroundColor?: string;
+  webPartTitle?: string;
 }
+
 
 
