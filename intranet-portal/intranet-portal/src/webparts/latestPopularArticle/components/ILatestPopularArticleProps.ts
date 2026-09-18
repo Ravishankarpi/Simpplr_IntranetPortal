@@ -14,4 +14,6 @@ export interface ILatestPopularArticleProps {
   showPostedBy: boolean;
   showSites: string[];
   context: any;
+  hideUIFilter?: boolean;
+  paneFilterSelection?: string;
 }

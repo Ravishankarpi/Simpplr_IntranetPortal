@@ -18,7 +18,9 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       loading: true,
       sortingOption: 'Latest'
     };
+
   }
+
 
   public async componentDidMount() {
     await this.fetchData();
@@ -30,7 +32,10 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       prevProps.maxSitePageCount !== this.props.maxSitePageCount) {
       await this.fetchData();
     }
-    
+
+    if (this.props.hideUIFilter && prevProps.paneFilterSelection !== this.props.paneFilterSelection) {
+      this.setState({ sortingOption: this.props.paneFilterSelection || "Latest" });
+    }
     if (prevState.sortingOption !== this.state.sortingOption) {
       await this.fetchData();
     }
@@ -72,36 +77,36 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       showTitle,
       showPublishedAt,
       showPostedBy,
-      layoutView
+      layoutView,
+      hideUIFilter,
+      paneFilterSelection
     } = this.props;
 
     return (
-      <section className={styles.latestPopularArticle}>
-        <div className={styles.sortButtonGroup}>
-          <button 
-            className={`${styles.sortButton} ${this.state.sortingOption === 'Latest' ? styles.sortButtonActive : ''}`}
-            onClick={() => this.setSorting('Latest')}
-          >
-            Latest
-          </button>
-          <button 
-            className={`${styles.sortButton} ${this.state.sortingOption === 'Popular' ? styles.sortButtonActive : ''}`}
-            onClick={() => this.setSorting('Popular')}
-          >
-            Popular
-          </button>
-        </div>
+      <section className={styles.latestPopularArticle} style={{ padding: 0, margin: 0 }}>
+        {!hideUIFilter && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+            <select
+              value={this.state.sortingOption}
+              onChange={(e) => this.setSorting(e.target.value)}
+              style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px', outline: 'none', cursor: 'pointer' }}
+            >
+              <option value="Latest">Sort by: Latest</option>
+              <option value="Popular">Sort by: Popular</option>
+            </select>
+          </div>
+        )}
 
         {this.state.loading && <div>Loading articles...</div>}
         {!this.state.loading && this.state.pages.length === 0 && <div>No articles found.</div>}
-        
+
         {!this.state.loading && this.state.pages.length > 0 && (
           <div className={layoutView === 'Row' ? styles.rowView : styles.listView}>
             {this.state.pages.map((page, idx) => {
               const dateStr = new Date(page.PublishedDate).toLocaleDateString('en-US', {
                 month: 'short', day: 'numeric', year: 'numeric'
               });
-              
+
               let metaString = '';
               if (showSiteName && page.SiteName) {
                 metaString += `In ${page.SiteName}`;

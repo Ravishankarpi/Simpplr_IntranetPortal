@@ -120,7 +120,8 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
                   context: this.context as any,
                   properties: this.properties,
                   searchTextLimit: 5,
-                  key: 'peopleFieldOwnersId'
+                  key: 'peopleFieldOwnersId',
+                  onGetErrorMessage: (value) => { return (value && value.length > 15) ? "Max 15 users allowed" : ""; }
                 }),
                 PropertyFieldPeoplePicker('customMembers', {
                   label: 'Custom Members',
@@ -131,7 +132,8 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
                   context: this.context as any,
                   properties: this.properties,
                   searchTextLimit: 5,
-                  key: 'peopleFieldMembersId'
+                  key: 'peopleFieldMembersId',
+                  onGetErrorMessage: (value) => { return (value && value.length > 15) ? "Max 15 users allowed" : ""; }
                 }),
                 PropertyFieldPeoplePicker('customVisitors', {
                   label: 'Custom Visitors',
@@ -142,7 +144,8 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
                   context: this.context as any,
                   properties: this.properties,
                   searchTextLimit: 5,
-                  key: 'peopleFieldVisitorsId'
+                  key: 'peopleFieldVisitorsId',
+                  onGetErrorMessage: (value) => { return (value && value.length > 15) ? "Max 15 users allowed" : ""; }
                 })
               ]
             }

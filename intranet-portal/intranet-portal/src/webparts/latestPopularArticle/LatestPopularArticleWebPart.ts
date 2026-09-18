@@ -30,6 +30,8 @@ export interface ILatestPopularArticleWebPartProps {
   showPublishedAt: boolean;
   showPostedBy: boolean;
   showSites: string[];
+  hideUIFilter: boolean;
+  paneFilterSelection: string;
 }
 
 export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<ILatestPopularArticleWebPartProps> {
@@ -56,6 +58,8 @@ export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<I
         showTitle: this.properties.showTitle !== undefined ? this.properties.showTitle : true,
         showPublishedAt: this.properties.showPublishedAt !== undefined ? this.properties.showPublishedAt : true,
         showPostedBy: this.properties.showPostedBy !== undefined ? this.properties.showPostedBy : true,
+        hideUIFilter: this.properties.hideUIFilter,
+        paneFilterSelection: this.properties.paneFilterSelection,
         showSites: Array.isArray(this.properties.showSites) ? this.properties.showSites : (this.properties.showSites ? [this.properties.showSites as any] : []),
         context: this.context
       }
@@ -146,6 +150,19 @@ export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<I
             description: "Configure Latest & Popular Articles"
           },
           groups: [
+            {
+              groupName: "Filter Settings",
+              groupFields: [
+                PropertyPaneToggle('hideUIFilter', { label: "Hide WebPart Filter", checked: false }),
+                ...(this.properties.hideUIFilter ? [
+                  PropertyPaneDropdown('paneFilterSelection', {
+                    label: "Select Filter",
+                    options: [{ key: 'Latest', text: 'Latest' }, { key: 'Popular', text: 'Popular' }],
+                    selectedKey: 'Latest'
+                  })
+                ] : [])
+              ]
+            },
             {
               groupName: "Layout Settings",
               groupFields: [
