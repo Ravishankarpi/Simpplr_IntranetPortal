@@ -12,6 +12,8 @@ import 'swiper/css/navigation';
 export interface ICarouselArticleState {
   pages: any[];
   loading: boolean;
+  showToast: boolean;
+  toastMessage: string;
 }
 
 export default class CarouselArticle extends React.Component<ICarouselArticleProps, ICarouselArticleState> {
@@ -19,7 +21,9 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
     super(props);
     this.state = {
       pages: [],
-      loading: true
+      loading: true,
+      showToast: false,
+      toastMessage: ''
     };
   }
 
@@ -61,6 +65,71 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
     }
   }
 
+  /* ── Share: copy URL to clipboard ── */
+  private handleShare = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const copy = (text: string) => {
+      if (navigator.clipboard) {
+        return navigator.clipboard.writeText(text);
+      }
+      // Fallback for older browsers
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    };
+
+    copy(url).then(() => {
+      this.setState({ showToast: true, toastMessage: '🔗 Link copied to clipboard!' });
+      setTimeout(() => this.setState({ showToast: false, toastMessage: '' }), 2500);
+    }).catch(() => {
+      this.setState({ showToast: true, toastMessage: 'Could not copy link.' });
+      setTimeout(() => this.setState({ showToast: false, toastMessage: '' }), 2500);
+    });
+  }
+
+  /* ── Learn more: open page in new tab ── */
+  private handleLearnMore = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  /* ── Shimmer skeleton ─────────────────────────────── */
+  private renderShimmer(): React.ReactElement {
+    const count = this.props.slideShowCount || 3;
+    return (
+      <section
+        className={styles.carouselArticle}
+        style={{ backgroundColor: this.props.backgroundColor || 'transparent' }}
+      >
+        {this.props.showWebPartTitle && this.props.webPartTitle && (
+          <div className={styles.webPartTitleBar}>
+            <h2 className={styles.webPartTitle}>{this.props.webPartTitle}</h2>
+          </div>
+        )}
+        <div className={styles.shimmerContainer}>
+          {Array.from({ length: count }).map((_, i) => (
+            <div key={i} className={styles.shimmerCard}>
+              <div className={styles.shimmerImage} style={{ height: `${this.props.carouselItemHeight || 150}px` }} />
+              <div className={styles.shimmerContent}>
+                <div className={styles.shimmerLine} />
+                <div className={styles.shimmerLineShort} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+    );
+  }
+
   public render(): React.ReactElement<ICarouselArticleProps> {
     const {
       slideShowCount,
@@ -73,7 +142,7 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
     } = this.props;
 
     if (this.state.loading) {
-      return <div>Loading articles...</div>;
+      return this.renderShimmer();
     }
 
     if (this.state.pages.length === 0) {
@@ -88,8 +157,13 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
         className={styles.carouselArticle}
         style={{ backgroundColor: this.props.backgroundColor || 'transparent' }}
       >
-        {/* ── Top space: Web Part Title ── */}
-        {this.props.webPartTitle && (
+        {/* ── Toast notification ── */}
+        {this.state.showToast && (
+          <div className={styles.toast}>{this.state.toastMessage}</div>
+        )}
+
+        {/* ── Web Part Title ── */}
+        {this.props.showWebPartTitle && this.props.webPartTitle && (
           <div className={styles.webPartTitleBar}>
             <h2 className={styles.webPartTitle}>{this.props.webPartTitle}</h2>
           </div>
@@ -154,11 +228,16 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
                   <div className={styles.cardFooter}>
                     <span
                       className={styles.cardAction}
-                      onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+                      onClick={(e) => this.handleShare(e, page.Url)}
                     >
                       Share
                     </span>
-                    <span className={styles.cardAction}>Learn more</span>
+                    <span
+                      className={styles.cardAction}
+                      onClick={(e) => this.handleLearnMore(e, page.Url)}
+                    >
+                      Learn more
+                    </span>
                   </div>
                 </a>
               </SwiperSlide>
@@ -170,4 +249,3 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
     );
   }
 }
-

@@ -1,8 +1,67 @@
 @import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
 
+/* ─── Shimmer animation ───────────────────────────── */
+@keyframes shimmerSlide {
+  0% {
+    background-position: -600px 0;
+  }
+
+  100% {
+    background-position: 600px 0;
+  }
+}
+
+.shimmerBase {
+  background: linear-gradient(to right, #eeeeee 8%, #e0e0e0 30%, #eeeeee 52%);
+  background-size: 1200px 100%;
+  animation: shimmerSlide 1.4s linear infinite;
+  border-radius: 6px;
+}
+
+.shimmerContainer {
+  display: flex;
+  gap: 16px;
+  padding: 0 56px;
+}
+
+.shimmerCard {
+  flex: 1;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+}
+
+.shimmerImage {
+  @extend .shimmerBase;
+  height: 150px;
+  border-radius: 12px 12px 0 0;
+}
+
+.shimmerContent {
+  padding: 14px 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.shimmerLine {
+  @extend .shimmerBase;
+  height: 14px;
+}
+
+.shimmerLineShort {
+  @extend .shimmerBase;
+  height: 12px;
+  width: 60%;
+}
+
+/* ─── WebPart ─────────────────────────────────────── */
 .carouselArticle {
-  border-radius: 18px;
-  padding: 16px 0 20px;         /* tight top/bottom — title + dots fill the space */
+  border-radius: 5px;
+  padding: 16px 0 20px;
   color: "[theme:bodyText, default: #323130]";
   color: var(--bodyText);
   font-family: "Segoe UI", "Segoe UI Web (West European)", "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
@@ -28,12 +87,12 @@
 /* ── Carousel container: hosts Swiper + arrows ─ */
 .carouselContainer {
   position: relative;
-  padding: 0 56px;              /* side zones for nav arrows */
+  padding: 0 56px;
 }
 
 .mySwiper {
   width: 100%;
-  padding-bottom: 36px; /* room for dot pagination */
+  padding-bottom: 36px;
 }
 
 .swiperSlide {
@@ -42,7 +101,7 @@
   height: auto;
 }
 
-/* ─── Card ───────────────────────────────────── */
+/* ─── Card ─────────────────────────────────────────── */
 .card {
   width: 100%;
   border-radius: 12px;
@@ -110,7 +169,7 @@
   overflow: hidden;
 }
 
-/* ─── Card Footer (Share / Learn more) ──────── */
+/* ─── Card Footer (Share / Learn more) ──────────── */
 .cardFooter {
   display: flex;
   justify-content: space-between;
@@ -129,50 +188,68 @@
   border: none;
   padding: 0;
 
-  &:hover { text-decoration: underline; }
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
-/* ─── MUI-style blue circular nav buttons ─── */
+/* ─── Tall rectangle nav buttons (smoky/transparent, 1.5:2.5 ratio) ─── */
 :global(.swiper-button-next),
 :global(.swiper-button-prev) {
-  background-color: #1976d2 !important;
-  width: 44px !important;
-  height: 44px !important;
-  border-radius: 50% !important;
-  color: white !important;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.22) !important;
-  transition: background-color 0.2s, transform 0.2s !important;
-  /* Stay within the side padding zone — not over cards */
+  background: rgba(15, 15, 15, 0.28) !important;
+  backdrop-filter: blur(6px) !important;
+  -webkit-backdrop-filter: blur(6px) !important;
+  width: 30px !important;
+  height: 56px !important;
+  border-radius: 6px !important;
+  color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18) !important;
+  border: 1px solid rgba(255, 255, 255, 0.18) !important;
+  transition: background 0.2s, transform 0.2s !important;
   margin-top: 0 !important;
-  top: 40% !important;
+  top: 38% !important;
   transform: translateY(-50%) !important;
 
   &:hover {
-    background-color: #1565c0 !important;
-    transform: translateY(-50%) scale(1.08) !important;
+    background: rgba(15, 15, 15, 0.48) !important;
+    transform: translateY(-50%) scaleX(1.08) !important;
   }
 }
 
 :global(.swiper-button-prev) {
-  left: 6px !important;
+  left: 8px !important;
 }
 
 :global(.swiper-button-next) {
-  right: 6px !important;
+  right: 8px !important;
 }
 
 :global(.swiper-button-next::after),
 :global(.swiper-button-prev::after) {
-  font-size: 16px !important;
+  font-size: 13px !important;
   font-weight: bold !important;
 }
 
-:global(.swiper-button-disabled) {
-  background-color: #b0bec5 !important;
-  opacity: 1 !important;
+/* ── Swiper SVG icon fill ── */
+:global(.swiper-button-icon) {
+  width: 60% !important;
+  height: 80% !important;
 }
 
-/* ─── Dot pagination ─────────────────────── */
+/* ── Direct SVG inside nav buttons ── */
+:global(.swiper-button-next svg),
+:global(.swiper-button-prev svg) {
+  width: 60% !important;
+  height: 80% !important;
+}
+
+:global(.swiper-button-disabled) {
+  background: rgba(15, 15, 15, 0.10) !important;
+  opacity: 1 !important;
+  color: rgba(255, 255, 255, 0.35) !important;
+}
+
+/* ─── Dot pagination ────────────────────────────── */
 :global(.swiper-pagination-bullet) {
   background-color: #90caf9 !important;
   opacity: 1 !important;
@@ -185,4 +262,47 @@
   background-color: #1976d2 !important;
   width: 24px !important;
   border-radius: 4px !important;
+}
+
+/* ─── Equal-height slides ────────────────────────── */
+:global(.swiper-wrapper) {
+  align-items: stretch !important;
+}
+
+/* ─── Toast notification ─────────────────────────── */
+@keyframes toastFade {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  12% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}
+
+.toast {
+  position: fixed;
+  bottom: 28px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20, 20, 20, 0.82);
+  color: #fff;
+  padding: 10px 24px;
+  border-radius: 24px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 99999;
+  pointer-events: none;
+  white-space: nowrap;
+  animation: toastFade 2.5s ease forwards;
 }

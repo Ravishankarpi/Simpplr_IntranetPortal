@@ -35,6 +35,7 @@ export interface ICarouselArticleWebPartProps {
   carouselItemHeight: number;
   backgroundColor: string;
   webPartTitle: string;
+  showWebPartTitle: boolean;
 }
 
 export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarouselArticleWebPartProps> {
@@ -68,6 +69,7 @@ export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarou
         carouselItemHeight: this.properties.carouselItemHeight || 150,
         backgroundColor: this.properties.backgroundColor || '',
         webPartTitle: this.properties.webPartTitle || '',
+        showWebPartTitle: this.properties.showWebPartTitle !== undefined ? this.properties.showWebPartTitle : false,
         context: this.context
       }
     );
@@ -146,6 +148,10 @@ export default class CarouselArticleWebPart extends BaseClientSideWebPart<ICarou
                   label: "Web Part Title",
                   description: "Displays a heading above the carousel. Leave empty to hide.",
                   placeholder: "e.g. Latest Articles"
+                }),
+                PropertyPaneToggle('showWebPartTitle', {
+                  label: "Show Web Part Title",
+                  checked: false
                 }),
                 PropertyPaneDropdown('slideShowCount', {
                   label: "Current Slide Show Count",

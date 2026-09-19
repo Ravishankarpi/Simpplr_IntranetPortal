@@ -7,4 +7,6 @@ export interface ISiteAboutProps {
   customMembers: any[];
   customVisitors: any[];
   context: any;
+  webPartTitle?: string;
+  showWebPartTitle?: boolean;
 }

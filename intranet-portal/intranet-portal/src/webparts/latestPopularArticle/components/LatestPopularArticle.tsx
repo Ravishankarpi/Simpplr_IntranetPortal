@@ -9,9 +9,44 @@ export interface ILatestPopularArticleState {
   loading: boolean;
   sortingOption: string;
   carouselIndex: number;
+  showToast: boolean;
+  toastMessage: string;
 }
 
-const CARDS_VISIBLE = 3; // how many cards to show at once
+const CARDS_VISIBLE = 3;
+
+/* Sort option metadata */
+const SORT_OPTIONS = [
+  { key: 'Latest',   label: 'Sort by: Latest'   },
+  { key: 'Popular',  label: 'Sort by: Popular'   },
+  { key: 'A-Z',      label: 'Sort by: A → Z'     },
+  { key: 'Z-A',      label: 'Sort by: Z → A'     },
+  { key: 'Oldest',   label: 'Sort by: Oldest'    },
+];
+
+/* Which SP sort key to request for each UI option */
+const SP_SORT_MAP: Record<string, string> = {
+  Latest:  'Latest',
+  Popular: 'Popular',
+  'A-Z':   'Latest',  // fetch latest, then sort client-side
+  'Z-A':   'Latest',
+  Oldest:  'Latest',
+};
+
+function applyClientSort(pages: any[], option: string): any[] {
+  switch (option) {
+    case 'A-Z':
+      return [...pages].sort((a, b) => (a.Title || '').localeCompare(b.Title || ''));
+    case 'Z-A':
+      return [...pages].sort((a, b) => (b.Title || '').localeCompare(a.Title || ''));
+    case 'Oldest':
+      return [...pages].sort((a, b) =>
+        new Date(a.PublishedDate || 0).getTime() - new Date(b.PublishedDate || 0).getTime()
+      );
+    default:
+      return pages;
+  }
+}
 
 export default class LatestPopularArticle extends React.Component<ILatestPopularArticleProps, ILatestPopularArticleState> {
   private trackOuterRef: React.RefObject<HTMLDivElement> = React.createRef();
@@ -23,6 +58,8 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       loading: true,
       sortingOption: 'Latest',
       carouselIndex: 0,
+      showToast: false,
+      toastMessage: ''
     };
   }
 
@@ -64,7 +101,9 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       }
 
       const maxCount = this.props.maxSitePageCount || 5;
-      const pages = await SPService.getSitePages(siteUrls, Constants.PromotedState, maxCount, this.state.sortingOption);
+      const spSort = SP_SORT_MAP[this.state.sortingOption] || 'Latest';
+      const rawPages = await SPService.getSitePages(siteUrls, Constants.PromotedState, maxCount, spSort);
+      const pages = applyClientSort(rawPages, this.state.sortingOption);
 
       this.setState({ pages, loading: false });
     } catch (err) {
@@ -77,7 +116,42 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
     this.setState({ sortingOption: option });
   }
 
-  /* ── Carousel helpers ───────────────────────────── */
+  /* ── Share: copy URL to clipboard ── */
+  private handleShare = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    const copy = (text: string) => {
+      if (navigator.clipboard) return navigator.clipboard.writeText(text);
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.focus();
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      return Promise.resolve();
+    };
+    copy(url)
+      .then(() => {
+        this.setState({ showToast: true, toastMessage: '🔗 Link copied to clipboard!' });
+        setTimeout(() => this.setState({ showToast: false, toastMessage: '' }), 2500);
+      })
+      .catch(() => {
+        this.setState({ showToast: true, toastMessage: 'Could not copy link.' });
+        setTimeout(() => this.setState({ showToast: false, toastMessage: '' }), 2500);
+      });
+  }
+
+  /* ── Learn more: open page in new tab ── */
+  private handleLearnMore = (e: React.MouseEvent, url: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    window.open(url, '_blank', 'noopener,noreferrer');
+  }
+
+  /* ── Carousel helpers ─────────────────────────────── */
   private get maxIndex(): number {
     return Math.max(0, this.state.pages.length - CARDS_VISIBLE);
   }
@@ -100,10 +174,46 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       const totalGap = gap * (CARDS_VISIBLE - 1);
       return (this.trackOuterRef.current.clientWidth - totalGap) / CARDS_VISIBLE;
     }
-    return 280; // fallback
+    return 280;
   }
 
-  /* ── Shared card renderer ───────────────────────── */
+  /* ── Shimmer ─────────────────────────────────────── */
+  private renderShimmer(): React.ReactElement {
+    const { layoutView } = this.props;
+    const isListView = layoutView === 'List';
+
+    if (isListView) {
+      return (
+        <div className={styles.shimmerListContainer}>
+          {[1, 2, 3, 4].map(i => (
+            <div key={i} className={styles.shimmerListItem}>
+              <div className={styles.shimmerListThumb} />
+              <div className={styles.shimmerListBody}>
+                <div className={styles.shimmerLine} />
+                <div className={styles.shimmerLineShort} />
+              </div>
+            </div>
+          ))}
+        </div>
+      );
+    }
+
+    return (
+      <div className={styles.shimmerRowContainer}>
+        {[1, 2, 3].map(i => (
+          <div key={i} className={styles.shimmerCard}>
+            <div className={styles.shimmerImage} />
+            <div className={styles.shimmerContent}>
+              <div className={styles.shimmerLine} />
+              <div className={styles.shimmerLineShort} />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
+  /* ── Shared card renderer ────────────────────────── */
   private renderCard(page: any, idx: number, extraStyle?: React.CSSProperties): React.ReactElement {
     const { showBanner, showSiteName, showTitle, showPublishedAt, showPostedBy } = this.props;
 
@@ -142,17 +252,22 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
         <div className={styles.cardFooter}>
           <span
             className={styles.cardAction}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); }}
+            onClick={(e) => this.handleShare(e, page.Url)}
           >
             Share
           </span>
-          <span className={styles.cardAction}>Learn more</span>
+          <span
+            className={styles.cardAction}
+            onClick={(e) => this.handleLearnMore(e, page.Url)}
+          >
+            Learn more
+          </span>
         </div>
       </a>
     );
   }
 
-  /* ── Carousel render ────────────────────────────── */
+  /* ── Carousel render ─────────────────────────────── */
   private renderCarousel(): React.ReactElement {
     const { pages, carouselIndex } = this.state;
     const cardWidth = this.getCardWidth();
@@ -226,67 +341,53 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       showPostedBy,
       layoutView,
       hideUIFilter,
+      showWebPartTitle,
+      webPartTitle,
     } = this.props;
 
     return (
       <section className={styles.latestPopularArticle} style={{ padding: 0, margin: 0 }}>
-        {/* Sort dropdown */}
+
+        {/* ── Toast ── */}
+        {this.state.showToast && (
+          <div className={styles.toast}>{this.state.toastMessage}</div>
+        )}
+
+        {/* ── Web Part Title ── */}
+        {showWebPartTitle && webPartTitle && (
+          <div className={styles.webPartTitleBar}>
+            <h2 className={styles.webPartTitle}>{webPartTitle}</h2>
+          </div>
+        )}
+
+        {/* ── Filter / Sort bar ── */}
         {!hideUIFilter && (
-          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '8px' }}>
+          <div className={styles.filterBar}>
             <select
+              className={styles.filterSelect}
               value={this.state.sortingOption}
               onChange={(e) => this.setSorting(e.target.value)}
-              style={{ padding: '4px 8px', borderRadius: '4px', border: '1px solid #ccc', fontSize: '12px', outline: 'none', cursor: 'pointer' }}
             >
-              <option value="Latest">Sort by: Latest</option>
-              <option value="Popular">Sort by: Popular</option>
+              {SORT_OPTIONS.map(opt => (
+                <option key={opt.key} value={opt.key}>{opt.label}</option>
+              ))}
             </select>
           </div>
         )}
 
-        {this.state.loading && <div>Loading articles...</div>}
+        {/* ── Loading shimmer ── */}
+        {this.state.loading && this.renderShimmer()}
+
+        {/* ── Empty state ── */}
         {!this.state.loading && this.state.pages.length === 0 && <div>No articles found.</div>}
 
+        {/* ── Content ── */}
         {!this.state.loading && this.state.pages.length > 0 && (
           layoutView === 'Carousel'
             ? this.renderCarousel()
             : (
               <div className={layoutView === 'Row' ? styles.rowView : styles.listView}>
-                {this.state.pages.map((page, idx) => {
-                  const dateStr = page.PublishedDate
-                    ? new Date(page.PublishedDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-                    : '';
-
-                  let metaString = '';
-                  if (showSiteName && page.SiteName) metaString += `In ${page.SiteName}`;
-                  if (showPostedBy && page.Author) metaString += `${metaString ? ' ' : ''}by ${page.Author}`;
-                  if (showPublishedAt && page.PublishedDate) metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
-
-                  return (
-                    <a key={idx} href={page.Url} target="_blank" rel="noopener noreferrer" className={styles.card}>
-                      {showBanner && (
-                        <div className={styles.imageContainer}>
-                          <img src={page.BannerImageUrl || 'https://via.placeholder.com/400x200?text=No+Image'} alt="Banner" />
-                        </div>
-                      )}
-                      <div className={styles.cardContent}>
-                        {showTitle && <h3 className={styles.title} title={page.Title}>{page.Title}</h3>}
-                        <div className={styles.metaData} title={metaString}>
-                          {showSiteName && page.SiteName && (
-                            <span>In <strong style={{ color: 'var(--link, #0078d4)' }}>{page.SiteName}</strong></span>
-                          )}
-                          {(showPostedBy || showPublishedAt) && (
-                            <span>
-                              {showSiteName && page.SiteName ? ' ' : ''}
-                              {showPostedBy && page.Author ? `by ${page.Author} ` : ''}
-                              {showPublishedAt && page.PublishedDate ? `on ${dateStr}` : ''}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </a>
-                  );
-                })}
+                {this.state.pages.map((page, idx) => this.renderCard(page, idx))}
               </div>
             )
         )}
@@ -294,4 +395,3 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
     );
   }
 }
-

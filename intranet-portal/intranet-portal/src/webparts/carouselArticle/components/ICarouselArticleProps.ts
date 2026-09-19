@@ -19,7 +19,5 @@ export interface ICarouselArticleProps {
   context: any;
   backgroundColor?: string;
   webPartTitle?: string;
+  showWebPartTitle?: boolean;
 }
-
-
-

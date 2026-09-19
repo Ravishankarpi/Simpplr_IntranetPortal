@@ -32,6 +32,8 @@ export interface ILatestPopularArticleWebPartProps {
   showSites: string[];
   hideUIFilter: boolean;
   paneFilterSelection: string;
+  webPartTitle: string;
+  showWebPartTitle: boolean;
 }
 
 export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<ILatestPopularArticleWebPartProps> {
@@ -60,6 +62,8 @@ export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<I
         showPostedBy: this.properties.showPostedBy !== undefined ? this.properties.showPostedBy : true,
         hideUIFilter: this.properties.hideUIFilter,
         paneFilterSelection: this.properties.paneFilterSelection,
+        webPartTitle: this.properties.webPartTitle || '',
+        showWebPartTitle: this.properties.showWebPartTitle !== undefined ? this.properties.showWebPartTitle : false,
         showSites: Array.isArray(this.properties.showSites) ? this.properties.showSites : (this.properties.showSites ? [this.properties.showSites as any] : []),
         context: this.context
       }
@@ -157,7 +161,13 @@ export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<I
                 ...(this.properties.hideUIFilter ? [
                   PropertyPaneDropdown('paneFilterSelection', {
                     label: "Select Filter",
-                    options: [{ key: 'Latest', text: 'Latest' }, { key: 'Popular', text: 'Popular' }],
+                    options: [
+                      { key: 'Latest',  text: 'Latest'       },
+                      { key: 'Popular', text: 'Popular'      },
+                      { key: 'A-Z',     text: 'A → Z (Title)'},
+                      { key: 'Z-A',     text: 'Z → A (Title)'},
+                      { key: 'Oldest',  text: 'Oldest First' },
+                    ],
                     selectedKey: 'Latest'
                   })
                 ] : [])
@@ -166,11 +176,20 @@ export default class LatestPopularArticleWebPart extends BaseClientSideWebPart<I
             {
               groupName: "Layout Settings",
               groupFields: [
+                PropertyPaneTextField('webPartTitle', {
+                  label: "Web Part Title",
+                  placeholder: "e.g. Latest Articles"
+                }),
+                PropertyPaneToggle('showWebPartTitle', {
+                  label: "Show Web Part Title",
+                  checked: false
+                }),
                 PropertyPaneDropdown('layoutView', {
                   label: "View Layout",
                   options: [
-                    { key: 'List', text: 'List View' },
-                    { key: 'Row', text: 'Row View' }
+                    { key: 'List',     text: 'List View'     },
+                    { key: 'Row',      text: 'Row View'      },
+                    { key: 'Carousel', text: 'Carousel View' }
                   ],
                   selectedKey: 'List'
                 }),

@@ -20,3 +20,10 @@ This document stores the instructions and prompts used for the AI to understand 
 5. **Read selected sites/all sites site pages**
 
 *Later instructions will be provided for latestPopularArticle root site get it from Constant.ts ROOT_SITE_URL*
+
+## Recent Changes
+- Updated the UI to match a more modern, MUI-inspired aesthetic.
+- Cards now have rounded corners, drop shadows, and a "Share" / "Learn more" footer.
+- The Swiper navigation buttons were changed to blue circular buttons and repositioned into side padding zones to avoid overlapping cards.
+- Added `backgroundColor` to the property pane to allow customizing the background color.
+- Added `webPartTitle` to the property pane to optionally display a heading above the carousel.

@@ -6,7 +6,7 @@ export interface ILatestPopularArticleProps {
   userDisplayName: string;
   maxSitePageCount: number;
   siteSelection: string;
-  layoutView: string; // List, Row
+  layoutView: string; // List, Row, Carousel
   showBanner: boolean;
   showSiteName: boolean;
   showTitle: boolean;
@@ -16,4 +16,6 @@ export interface ILatestPopularArticleProps {
   context: any;
   hideUIFilter?: boolean;
   paneFilterSelection?: string;
+  webPartTitle?: string;
+  showWebPartTitle?: boolean;
 }

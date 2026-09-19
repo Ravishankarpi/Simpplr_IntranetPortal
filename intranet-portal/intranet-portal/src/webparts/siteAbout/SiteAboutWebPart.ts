@@ -2,7 +2,9 @@ import * as React from 'react';
 import * as ReactDom from 'react-dom';
 import { Version } from '@microsoft/sp-core-library';
 import {
-  type IPropertyPaneConfiguration
+  type IPropertyPaneConfiguration,
+  PropertyPaneTextField,
+  PropertyPaneToggle
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import { IReadonlyTheme } from '@microsoft/sp-component-base';
@@ -17,6 +19,8 @@ export interface ISiteAboutWebPartProps {
   customOwners: any[];
   customMembers: any[];
   customVisitors: any[];
+  webPartTitle: string;
+  showWebPartTitle: boolean;
 }
 
 export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWebPartProps> {
@@ -35,6 +39,8 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
         customOwners: this.properties.customOwners || [],
         customMembers: this.properties.customMembers || [],
         customVisitors: this.properties.customVisitors || [],
+        webPartTitle: this.properties.webPartTitle || '',
+        showWebPartTitle: this.properties.showWebPartTitle !== undefined ? this.properties.showWebPartTitle : false,
         context: this.context
       }
     );
@@ -108,6 +114,19 @@ export default class SiteAboutWebPart extends BaseClientSideWebPart<ISiteAboutWe
             description: "Site About Configuration"
           },
           groups: [
+            {
+              groupName: "Title Settings",
+              groupFields: [
+                PropertyPaneTextField('webPartTitle', {
+                  label: "Web Part Title",
+                  placeholder: "e.g. About this site"
+                }),
+                PropertyPaneToggle('showWebPartTitle', {
+                  label: "Show Web Part Title",
+                  checked: false
+                })
+              ]
+            },
             {
               groupName: "Custom Personnel (Overrides SP Groups)",
               groupFields: [

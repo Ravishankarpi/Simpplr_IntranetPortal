@@ -122,13 +122,41 @@ export default class SiteAbout extends React.Component<ISiteAboutProps, ISiteAbo
     );
   }
 
+  private renderShimmer(): React.ReactElement {
+    return (
+      <div className={styles.shimmerSection}>
+        {[1, 2].map(i => (
+          <div key={i}>
+            <div className={styles.shimmerGroupTitle} />
+            <div className={styles.shimmerAvatarRow}>
+              {[1, 2, 3].map(j => (
+                <div key={j} className={styles.shimmerAvatar}>
+                  <div className={styles.shimmerCircle} />
+                  <div className={styles.shimmerTextBlock}>
+                    <div className={styles.shimmerLine} />
+                    <div className={styles.shimmerLineShort} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   public render(): React.ReactElement<ISiteAboutProps> {
     const { siteTitle, siteDescription, owners, members, visitors, loading } = this.state;
 
     return (
       <section className={`${styles.siteAbout} ${this.props.hasTeamsContext ? styles.teams : ''}`}>
+        {this.props.showWebPartTitle && this.props.webPartTitle && (
+          <div className={styles.webPartTitleBar}>
+            <h2 className={styles.webPartTitleText}>{this.props.webPartTitle}</h2>
+          </div>
+        )}
         {loading ? (
-          <div>Loading site information...</div>
+          this.renderShimmer()
         ) : (
           <>
             <div className={styles.header}>
