@@ -33,6 +33,14 @@
           "manifest": "./src/webparts/siteAbout/SiteAboutWebPart.manifest.json"
         }
       ]
+    },
+    "site-banner-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/siteBanner/SiteBannerWebPart.js",
+          "manifest": "./src/webparts/siteBanner/SiteBannerWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -41,6 +49,7 @@
     "CarouselArticleWebPartStrings": "lib/webparts/carouselArticle/loc/{locale}.js",
     "LatestPopularArticleWebPartStrings": "lib/webparts/latestPopularArticle/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
-    "SiteAboutWebPartStrings": "lib/webparts/siteAbout/loc/{locale}.js"
+    "SiteAboutWebPartStrings": "lib/webparts/siteAbout/loc/{locale}.js",
+    "SiteBannerWebPartStrings": "lib/webparts/siteBanner/loc/{locale}.js"
   }
 }

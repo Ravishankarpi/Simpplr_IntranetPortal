@@ -1,0 +1,221 @@
+@import '~@microsoft/sp-office-ui-fabric-core/dist/sass/SPFabricCore.scss';
+
+/* ─── Banner root ─────────────────────────────────── */
+.siteBanner {
+  width: calc(100vw - 400px);
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: stretch;
+  font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, "Helvetica Neue", sans-serif;
+  /* border-radius, min-height, box-shadow applied via inline style from property pane */
+
+  &.teams {
+    font-family: $ms-font-family-fallbacks;
+  }
+}
+
+/* ─── Background image ────────────────────────────── */
+.bgImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  /* must NOT intercept mouse events */
+  user-select: none;
+  /* object-fit applied inline */
+}
+
+/* ─── Overlay ─────────────────────────────────────── */
+.overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* ─── Inner content row ───────────────────────────── */
+.inner {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  /* padding and justify-content applied inline */
+}
+
+/* ─── Site image wrapper ──────────────────────────── */
+.siteImageWrapper {
+  flex-shrink: 0;
+}
+
+/* .siteImage size/shape applied inline */
+.siteImage {
+  display: block;
+  object-fit: cover;
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
+}
+
+/* ─── Text content ────────────────────────────────── */
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.eyebrow {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  opacity: 0.75;
+  margin: 0;
+}
+
+.bannerTitle {
+  font-weight: 800;
+  line-height: 1.15;
+  margin: 0;
+  letter-spacing: -0.5px;
+  /* font-size applied inline */
+}
+
+.bannerDescription {
+  font-size: clamp(13px, 1.4vw, 15px);
+  line-height: 1.55;
+  opacity: 0.82;
+  margin: 0;
+  max-width: 560px;
+}
+
+/* ─── CTA Button ─────────────────────────────────── */
+.ctaWrapper {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.ctaButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 28px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  text-decoration: none;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, opacity 0.18s ease;
+  white-space: nowrap;
+  /* border-radius applied inline */
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    opacity: 0.92;
+  }
+
+  &:active {
+    transform: translateY(0);
+    box-shadow: none;
+  }
+
+  &.solid {
+    border: 2px solid transparent;
+    /* background/color applied inline */
+  }
+
+  &.outline {
+    background: transparent;
+    border: 2px solid currentColor;
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  &.ghost {
+    background: rgba(255, 255, 255, 0.18);
+    border: 1.5px solid rgba(255, 255, 255, 0.55);
+    color: inherit;
+    backdrop-filter: blur(4px);
+
+    &:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+/* ─── Placeholder (unconfigured state) ────────────── */
+.placeholder {
+  width: 100%;
+  min-height: 160px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 2px dashed #c8c6c4;
+  border-radius: 10px;
+  background: #faf9f8;
+  color: #605e5c;
+  text-align: center;
+  padding: 32px;
+}
+
+.placeholderIcon {
+  font-size: 36px;
+  opacity: 0.5;
+}
+
+.placeholderTitle {
+  font-size: 16px;
+  font-weight: 600;
+  color: #323130;
+  margin: 0;
+}
+
+.placeholderHint {
+  font-size: 13px;
+  color: #605e5c;
+  margin: 0;
+}
+
+/* ─── Responsive ─────────────────────────────────── */
+@media (max-width: 640px) {
+  .siteBanner {
+    width: 100%;
+  }
+
+  .inner {
+    flex-direction: column;
+    align-items: flex-start !important;
+    padding: 20px 22px !important;
+    gap: 16px;
+  }
+
+  .siteImage {
+    width: 72px !important;
+    height: 72px !important;
+  }
+
+  .ctaWrapper {
+    width: 100%;
+  }
+
+  .ctaButton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .bannerDescription {
+    max-width: 100%;
+  }
+}
