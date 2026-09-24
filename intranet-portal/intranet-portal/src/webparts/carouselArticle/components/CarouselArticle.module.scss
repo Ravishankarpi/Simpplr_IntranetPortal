@@ -87,7 +87,7 @@
 /* ── Carousel container: hosts Swiper + arrows ─ */
 .carouselContainer {
   position: relative;
-  padding: 0 56px;
+  padding: 0;
 }
 
 .mySwiper {
@@ -125,6 +125,7 @@
   width: 100%;
   background-color: #e8e8e8;
   position: relative;
+  cursor: pointer;
 
   img {
     position: absolute;
@@ -145,6 +146,7 @@
   gap: 6px;
   background-color: #ffffff;
   min-height: 80px;
+  cursor: pointer;
 }
 
 .title {

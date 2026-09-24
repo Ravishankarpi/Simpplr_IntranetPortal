@@ -1,7 +1,7 @@
 export const Constants = {
   PromotedState: [0, 1, 2] // 1: Promoted as News, 2: Published as News
 };
-let env = "DEV";
+let env = "PROD";
 let domain = "https://ornlfcu.sharepoint.com";
 let siteName = "simpplr-dev";
 

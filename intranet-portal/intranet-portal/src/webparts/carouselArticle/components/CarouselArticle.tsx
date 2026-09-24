@@ -67,7 +67,6 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
 
   /* ── Share: copy URL to clipboard ── */
   private handleShare = (e: React.MouseEvent, url: string) => {
-    e.preventDefault();
     e.stopPropagation();
     const copy = (text: string) => {
       if (navigator.clipboard) {
@@ -96,9 +95,7 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
   }
 
   /* ── Learn more: open page in new tab ── */
-  private handleLearnMore = (e: React.MouseEvent, url: string) => {
-    e.preventDefault();
-    e.stopPropagation();
+  private handleLearnMore = (_e: React.MouseEvent, url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
@@ -184,66 +181,72 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
             modules={[Autoplay, Pagination, Navigation]}
             className={styles.mySwiper}
           >
-          {this.state.pages.map((page, idx) => {
-            const dateStr = page.PublishedDate
-              ? new Date(page.PublishedDate).toLocaleDateString('en-US', {
+            {this.state.pages.map((page, idx) => {
+              const dateStr = page.PublishedDate
+                ? new Date(page.PublishedDate).toLocaleDateString('en-US', {
                   month: 'short', day: 'numeric', year: 'numeric'
                 })
-              : '';
+                : '';
 
-            let metaString = '';
-            if (showSiteName && page.SiteName) metaString += `In ${page.SiteName}`;
-            if (showPostedBy && page.Author) metaString += `${metaString ? ' ' : ''}by ${page.Author}`;
-            if (showPublishedAt && page.PublishedDate) metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
+              let metaString = '';
+              if (showSiteName && page.SiteName) metaString += `In ${page.SiteName}`;
+              if (showPostedBy && page.Author) metaString += `${metaString ? ' ' : ''}by ${page.Author}`;
+              if (showPublishedAt && page.PublishedDate) metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
 
-            return (
-              <SwiperSlide key={idx} className={styles.swiperSlide}>
-                <a href={page.Url} target="_blank" rel="noopener noreferrer" className={styles.card}>
-                  {showBanner && (
-                    <div
-                      className={styles.imageContainer}
-                      style={{ minHeight: `${this.props.carouselItemHeight || 150}px` }}
-                    >
-                      <img
-                        src={page.BannerImageUrl || 'https://via.placeholder.com/400x225?text=No+Image'}
-                        alt={page.Title || 'Article'}
-                      />
-                    </div>
-                  )}
-                  <div className={styles.cardContent}>
-                    {showTitle && <h3 className={styles.title} title={page.Title}>{page.Title}</h3>}
-                    <div className={styles.metaData} title={metaString}>
-                      {showSiteName && page.SiteName && (
-                        <span>In <strong style={{ color: 'var(--link, #0078d4)' }}>{page.SiteName}</strong></span>
-                      )}
-                      {(showPostedBy || showPublishedAt) && (
-                        <span>
-                          {showSiteName && page.SiteName ? ' ' : ''}
-                          {showPostedBy && page.Author ? `by ${page.Author} ` : ''}
-                          {showPublishedAt && page.PublishedDate ? `on ${dateStr}` : ''}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-                  <div className={styles.cardFooter}>
-                    <span
-                      className={styles.cardAction}
-                      onClick={(e) => this.handleShare(e, page.Url)}
-                    >
-                      Share
-                    </span>
-                    <span
-                      className={styles.cardAction}
+              return (
+                <SwiperSlide key={idx} className={styles.swiperSlide}>
+                  <div className={styles.card}>
+                    {showBanner && (
+                      <div
+                        onClick={(e) => this.handleLearnMore(e, page.Url)}
+
+                        className={styles.imageContainer}
+                        style={{ minHeight: `${this.props.carouselItemHeight || 150}px` }}
+
+                      >
+                        <img
+                          src={page.BannerImageUrl || 'https://via.placeholder.com/400x225?text=No+Image'}
+                          alt={page.Title || 'Article'}
+                        />
+                      </div>
+                    )}
+                    <div className={styles.cardContent}
                       onClick={(e) => this.handleLearnMore(e, page.Url)}
+
                     >
-                      Learn more
-                    </span>
+                      {showTitle && <h3 className={styles.title} title={page.Title}>{page.Title}</h3>}
+                      <div className={styles.metaData} title={metaString}>
+                        {showSiteName && page.SiteName && (
+                          <span>In <strong style={{ color: 'var(--link, #0078d4)' }}>{page.SiteName}</strong></span>
+                        )}
+                        {(showPostedBy || showPublishedAt) && (
+                          <span>
+                            {showSiteName && page.SiteName ? ' ' : ''}
+                            {showPostedBy && page.Author ? `by ${page.Author} ` : ''}
+                            {showPublishedAt && page.PublishedDate ? `on ${dateStr}` : ''}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className={styles.cardFooter}>
+                      <span
+                        className={styles.cardAction}
+                        onClick={(e) => this.handleShare(e, page.Url)}
+                      >
+                        Share
+                      </span>
+                      <span
+                        className={styles.cardAction}
+                        onClick={(e) => this.handleLearnMore(e, page.Url)}
+                      >
+                        Learn more
+                      </span>
+                    </div>
                   </div>
-                </a>
-              </SwiperSlide>
-            );
-          })}
-        </Swiper>
+                </SwiperSlide>
+              );
+            })}
+          </Swiper>
         </div>
       </section>
     );

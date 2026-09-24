@@ -11,26 +11,27 @@ export interface ILatestPopularArticleState {
   carouselIndex: number;
   showToast: boolean;
   toastMessage: string;
+  narrowContainer: boolean;  // true when the listView is < 400px wide
 }
 
 const CARDS_VISIBLE = 3;
 
 /* Sort option metadata */
 const SORT_OPTIONS = [
-  { key: 'Latest',   label: 'Sort by: Latest'   },
-  { key: 'Popular',  label: 'Sort by: Popular'   },
-  { key: 'A-Z',      label: 'Sort by: A → Z'     },
-  { key: 'Z-A',      label: 'Sort by: Z → A'     },
-  { key: 'Oldest',   label: 'Sort by: Oldest'    },
+  { key: 'Latest', label: 'Sort by: Latest' },
+  { key: 'Popular', label: 'Sort by: Popular' },
+  { key: 'A-Z', label: 'Sort by: A → Z' },
+  { key: 'Z-A', label: 'Sort by: Z → A' },
+  { key: 'Oldest', label: 'Sort by: Oldest' },
 ];
 
 /* Which SP sort key to request for each UI option */
 const SP_SORT_MAP: Record<string, string> = {
-  Latest:  'Latest',
+  Latest: 'Latest',
   Popular: 'Popular',
-  'A-Z':   'Latest',  // fetch latest, then sort client-side
-  'Z-A':   'Latest',
-  Oldest:  'Latest',
+  'A-Z': 'Latest',  // fetch latest, then sort client-side
+  'Z-A': 'Latest',
+  Oldest: 'Latest',
 };
 
 function applyClientSort(pages: any[], option: string): any[] {
@@ -50,6 +51,8 @@ function applyClientSort(pages: any[], option: string): any[] {
 
 export default class LatestPopularArticle extends React.Component<ILatestPopularArticleProps, ILatestPopularArticleState> {
   private trackOuterRef: React.RefObject<HTMLDivElement> = React.createRef();
+  private _listViewRef: React.RefObject<HTMLDivElement> = React.createRef();
+  private _resizeObserver: ResizeObserver | null = null;
 
   constructor(props: ILatestPopularArticleProps) {
     super(props);
@@ -59,12 +62,32 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
       sortingOption: 'Latest',
       carouselIndex: 0,
       showToast: false,
-      toastMessage: ''
+      toastMessage: '',
+      narrowContainer: false,
     };
   }
 
   public async componentDidMount() {
     await this.fetchData();
+    // Watch the listView container for width changes
+    if (this._listViewRef.current && typeof ResizeObserver !== 'undefined') {
+      this._resizeObserver = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          const isNarrow = entry.contentRect.width < 400;
+          if (this.state.narrowContainer !== isNarrow) {
+            this.setState({ narrowContainer: isNarrow });
+          }
+        }
+      });
+      this._resizeObserver.observe(this._listViewRef.current);
+    }
+  }
+
+  public componentWillUnmount() {
+    if (this._resizeObserver) {
+      this._resizeObserver.disconnect();
+      this._resizeObserver = null;
+    }
   }
 
   public async componentDidUpdate(prevProps: ILatestPopularArticleProps, prevState: ILatestPopularArticleState) {
@@ -118,7 +141,6 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
 
   /* ── Share: copy URL to clipboard ── */
   private handleShare = (e: React.MouseEvent, url: string) => {
-    e.preventDefault();
     e.stopPropagation();
     const copy = (text: string) => {
       if (navigator.clipboard) return navigator.clipboard.writeText(text);
@@ -145,9 +167,7 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
   }
 
   /* ── Learn more: open page in new tab ── */
-  private handleLearnMore = (e: React.MouseEvent, url: string) => {
-    e.preventDefault();
-    e.stopPropagation();
+  private handleLearnMore = (_e: React.MouseEvent, url: string) => {
     window.open(url, '_blank', 'noopener,noreferrer');
   }
 
@@ -227,29 +247,33 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
     if (showPublishedAt && page.PublishedDate) metaString += `${metaString ? ' ' : ''}on ${dateStr}`;
 
     return (
-      <a
+      <div
         key={idx}
-        href={page.Url}
-        target="_blank"
-        rel="noopener noreferrer"
         className={styles.card}
         style={extraStyle}
       >
         {showBanner && (
-          <div className={styles.imageContainer}>
+          <div className={styles.imageContainer}
+            onClick={(e) => this.handleLearnMore(e, page.Url)}
+          >
             <img
               src={page.BannerImageUrl || 'https://via.placeholder.com/400x225?text=No+Image'}
               alt={page.Title || 'Article'}
             />
           </div>
         )}
-        <div className={styles.cardContent}>
+        <div className={styles.cardContent}
+          onClick={(e) => this.handleLearnMore(e, page.Url)}
+        >
           {showTitle && <h3 className={styles.title} title={page.Title}>{page.Title}</h3>}
           <div className={styles.metaData} title={metaString}>
             {metaString || '\u00A0'}
           </div>
         </div>
-        <div className={styles.cardFooter}>
+        <div
+          className={styles.cardFooter}
+          style={this.state.narrowContainer ? { display: 'none' } : undefined}
+        >
           <span
             className={styles.cardAction}
             onClick={(e) => this.handleShare(e, page.Url)}
@@ -263,7 +287,7 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
             Learn more
           </span>
         </div>
-      </a>
+      </div>
     );
   }
 
@@ -386,7 +410,10 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
           layoutView === 'Carousel'
             ? this.renderCarousel()
             : (
-              <div className={layoutView === 'Row' ? styles.rowView : styles.listView}>
+              <div
+                ref={layoutView === 'Row' ? undefined : this._listViewRef}
+                className={layoutView === 'Row' ? styles.rowView : styles.listView}
+              >
                 {this.state.pages.map((page, idx) => this.renderCard(page, idx))}
               </div>
             )

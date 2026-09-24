@@ -30,14 +30,18 @@
   color: #323130;
   transition: all 0.2s;
 
-  &:hover { background-color: #e1dfdd; }
+  &:hover {
+    background-color: #e1dfdd;
+  }
 }
 
 .sortButtonActive {
   background-color: #323130;
   color: #ffffff;
 
-  &:hover { background-color: #201f1e; }
+  &:hover {
+    background-color: #201f1e;
+  }
 }
 
 /* ─── Shared card ─────────────────────────────── */
@@ -63,6 +67,7 @@
   position: relative;
   width: 100%;
   padding-top: 56%;
+  cursor: pointer;
 
   img {
     position: absolute;
@@ -82,6 +87,7 @@
   gap: 6px;
   flex-grow: 1;
   background-color: #ffffff;
+  cursor: pointer;
 }
 
 .title {
@@ -154,7 +160,9 @@
     padding-top: 0;
     min-height: 90px;
 
-    img { border-radius: 8px 0 0 8px; }
+    img {
+      border-radius: 8px 0 0 8px;
+    }
   }
 
   .cardContent {
@@ -177,11 +185,26 @@
   }
 
   @media (max-width: 600px) {
-    .card { min-height: 80px; }
-    .imageContainer { width: 90px; min-width: 90px; }
-    .cardContent { padding: 8px 10px; }
-    .title { font-size: 14px; }
-    .metaData { font-size: 11px; }
+    .card {
+      min-height: 80px;
+    }
+
+    .imageContainer {
+      width: 90px;
+      min-width: 90px;
+    }
+
+    .cardContent {
+      padding: 8px 10px;
+    }
+
+    .title {
+      font-size: 14px;
+    }
+
+    .metaData {
+      font-size: 11px;
+    }
   }
 }
 
@@ -191,11 +214,18 @@
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 16px;
 
-  .card { height: 100%; }
+  .card {
+    height: 100%;
+  }
 
-  .imageContainer { width: 100%; }
+  .imageContainer {
+    width: 100%;
+  }
 
-  .cardContent { flex-grow: 1; padding: 12px 14px; }
+  .cardContent {
+    flex-grow: 1;
+    padding: 12px 14px;
+  }
 }
 
 /* ─── CAROUSEL VIEW ─────────────────────────────── */
@@ -225,7 +255,9 @@
   display: flex;
   flex-direction: column;
 
-  .card { height: 100%; }
+  .card {
+    height: 100%;
+  }
 }
 
 /* MUI-style circular nav buttons */
@@ -265,8 +297,13 @@
   }
 }
 
-.carouselBtnPrev { left: 10px; }
-.carouselBtnNext { right: 10px; }
+.carouselBtnPrev {
+  left: 10px;
+}
+
+.carouselBtnNext {
+  right: 10px;
+}
 
 /* Dot indicators */
 .carouselDots {
@@ -327,13 +364,21 @@
   outline: none;
   transition: border-color 0.2s;
 
-  &:hover, &:focus { border-color: #1976d2; }
+  &:hover,
+  &:focus {
+    border-color: #1976d2;
+  }
 }
 
 /* ─── Shimmer animation ─────────────────────────── */
 @keyframes shimmerSlide {
-  0%   { background-position: -600px 0; }
-  100% { background-position: 600px 0; }
+  0% {
+    background-position: -600px 0;
+  }
+
+  100% {
+    background-position: 600px 0;
+  }
 }
 
 .shimmerBase {
@@ -418,10 +463,23 @@
 
 /* ─── Toast notification ─────────────────────────── */
 @keyframes toastFade {
-  0%   { opacity: 0; transform: translateX(-50%) translateY(10px); }
-  12%  { opacity: 1; transform: translateX(-50%) translateY(0);    }
-  80%  { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px);
+  }
+
+  12% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+
+  80% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+  }
 }
 
 .toast {
