@@ -168,7 +168,7 @@ export default class LatestPopularArticle extends React.Component<ILatestPopular
 
   /* ── Learn more: open page in new tab ── */
   private handleLearnMore = (_e: React.MouseEvent, url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(url, '_self', 'noopener,noreferrer');
   }
 
   /* ── Carousel helpers ─────────────────────────────── */

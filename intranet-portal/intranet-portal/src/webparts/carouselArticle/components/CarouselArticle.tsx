@@ -96,7 +96,7 @@ export default class CarouselArticle extends React.Component<ICarouselArticlePro
 
   /* ── Learn more: open page in new tab ── */
   private handleLearnMore = (_e: React.MouseEvent, url: string) => {
-    window.open(url, '_blank', 'noopener,noreferrer');
+    window.open(url, '_self', 'noopener,noreferrer');
   }
 
   /* ── Shimmer skeleton ─────────────────────────────── */
