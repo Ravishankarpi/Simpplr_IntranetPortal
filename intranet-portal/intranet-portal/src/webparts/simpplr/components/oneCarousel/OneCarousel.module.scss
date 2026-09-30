@@ -1,0 +1,31 @@
+.oneCarouselContainer {
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 16px 0;
+  background-color: transparent;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+.carouselTrack {
+  display: flex;
+  width: 100%;
+  gap: 16px;
+  align-items: stretch;
+  position: relative;
+  box-sizing: border-box;
+}
+
+@media (max-width: 900px) {
+  .carouselTrack {
+    flex-wrap: wrap;
+    gap: 14px;
+  }
+}
+
+@media (max-width: 600px) {
+  .carouselTrack {
+    flex-direction: column;
+    gap: 12px;
+  }
+}

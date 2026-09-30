@@ -41,6 +41,14 @@
           "manifest": "./src/webparts/siteBanner/SiteBannerWebPart.manifest.json"
         }
       ]
+    },
+    "simpplr-web-part": {
+      "components": [
+        {
+          "entrypoint": "./lib/webparts/simpplr/SimpplrWebPart.js",
+          "manifest": "./src/webparts/simpplr/SimpplrWebPart.manifest.json"
+        }
+      ]
     }
   },
   "externals": {},
@@ -50,6 +58,7 @@
     "LatestPopularArticleWebPartStrings": "lib/webparts/latestPopularArticle/loc/{locale}.js",
     "PropertyControlStrings": "node_modules/@pnp/spfx-property-controls/lib/loc/{locale}.js",
     "SiteAboutWebPartStrings": "lib/webparts/siteAbout/loc/{locale}.js",
-    "SiteBannerWebPartStrings": "lib/webparts/siteBanner/loc/{locale}.js"
+    "SiteBannerWebPartStrings": "lib/webparts/siteBanner/loc/{locale}.js",
+    "SimpplrWebPartStrings": "lib/webparts/simpplr/loc/{locale}.js"
   }
 }

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/spfx/client-side-web-part-manifest.schema.json",
+  "id": "eec828fb-3f39-44bb-a0a3-cb5b5c8e12bc",
+  "alias": "SimpplrWebPart",
+  "componentType": "WebPart",
+  "version": "*",
+  "manifestVersion": 2,
+  "requiresCustomScript": false,
+  "supportedHosts": ["SharePointWebPart", "TeamsPersonalApp", "TeamsTab", "SharePointFullPage"],
+  "supportsThemeVariants": true,
+  "preconfiguredEntries": [{
+    "groupId": "5c03119e-3074-46fd-976b-c60198311f70",
+    "group": { "default": "Advanced" },
+    "title": { "default": "Simpplr" },
+    "description": { "default": "Simpplr multi-component web part" },
+    "officeFabricIconFontName": "WebAppBuilderModule",
+    "properties": {
+      "title": "oneCarousel",
+      "carouselTitle": ""
+    }
+  }]
+}
