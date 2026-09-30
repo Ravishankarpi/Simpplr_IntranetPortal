@@ -10,16 +10,23 @@ import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'SimpplrWebPartStrings';
 import OneCarousel from './components/oneCarousel/OneCarousel';
 import { IOneCarouselProps } from './components/oneCarousel/IOneCarouselProps';
+import PersonalizedCompanyNews, { IPersonalizedCompanyNewsProps } from './components/personalizedCompanyNews/PersonalizedCompanyNews';
+import PersonalizedCompanyCalendar, { IPersonalizedCompanyCalendarProps } from './components/personalizedCompanyCalendar/PersonalizedCompanyCalendar';
 import { getSP } from '../../shared/pnpjsConfig';
+import './SimpplrWebPart.module.scss';
 
 export interface ISimpplrWebPartProps {
   title: string;
   carouselTitle?: string;
+  newsTitle?: string;
+  calendarTitle?: string;
 }
 
 export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPartProps> {
 
   public render(): void {
+    this._applyCanvasPadding();
+
     const normalizedTitle: string = (this.properties.title || '').trim().toLowerCase();
 
     let element: React.ReactElement;
@@ -30,6 +37,18 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         context: this.context
       };
       element = React.createElement(OneCarousel, carouselProps);
+    } else if (normalizedTitle === 'personalizedcompanynews') {
+      const newsProps: IPersonalizedCompanyNewsProps = {
+        context: this.context,
+        newsTitle: this.properties.newsTitle || 'Personalized Company News'
+      };
+      element = React.createElement(PersonalizedCompanyNews, newsProps);
+    } else if (normalizedTitle === 'personalizedcompanycalendar') {
+      const calendarProps: IPersonalizedCompanyCalendarProps = {
+        context: this.context,
+        calendarTitle: this.properties.calendarTitle || 'Personalized Company Calendar'
+      };
+      element = React.createElement(PersonalizedCompanyCalendar, calendarProps);
     } else {
       // Fallback display when title does not match an existing component
       element = React.createElement(
@@ -49,8 +68,8 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           'p',
           { style: { margin: 0 } },
           this.properties.title
-            ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel" in the property pane.`
-            : 'Please configure the web part by entering "oneCarousel" as the Title in the property pane.'
+            ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
+            : 'Please configure the web part by entering "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
         )
       );
     }
@@ -60,7 +79,30 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
 
   protected async onInit(): Promise<void> {
     getSP(this.context);
+    this._applyCanvasPadding();
     return super.onInit();
+  }
+
+  private _applyCanvasPadding(): void {
+    const styleId: string = 'simpplr-canvas-control-style';
+    if (!document.getElementById(styleId)) {
+      const styleEl: HTMLStyleElement = document.createElement('style');
+      styleEl.id = styleId;
+      styleEl.type = 'text/css';
+      styleEl.innerHTML = `
+        [data-type="CanvasControlEdit"] {
+          padding: 5px !important;
+        }
+      `;
+      document.head.appendChild(styleEl);
+    }
+
+    if (this.domElement) {
+      const canvasControl: HTMLElement | null = this.domElement.closest('[data-type="CanvasControlEdit"]') as HTMLElement;
+      if (canvasControl) {
+        canvasControl.style.setProperty('padding', '5px', 'important');
+      }
+    }
   }
 
   protected onDispose(): void {
@@ -85,7 +127,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         groupFields: [
           PropertyPaneTextField('title', {
             label: strings.TitleFieldLabel,
-            description: 'Enter component name to load (e.g. "oneCarousel")'
+            description: 'Enter component name to load (e.g. "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
           })
         ]
       }
@@ -99,6 +141,26 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('carouselTitle', {
             label: 'Display Title',
             description: 'Optional heading displayed above the carousel'
+          })
+        ]
+      });
+    } else if (normalizedTitle === 'personalizedcompanynews') {
+      groups.push({
+        groupName: 'Personalized Company News Settings',
+        groupFields: [
+          PropertyPaneTextField('newsTitle', {
+            label: 'News Title',
+            description: 'Heading displayed above the news feed'
+          })
+        ]
+      });
+    } else if (normalizedTitle === 'personalizedcompanycalendar') {
+      groups.push({
+        groupName: 'Personalized Company Calendar Settings',
+        groupFields: [
+          PropertyPaneTextField('calendarTitle', {
+            label: 'Calendar Title',
+            description: 'Heading displayed above the calendar widget'
           })
         ]
       });
