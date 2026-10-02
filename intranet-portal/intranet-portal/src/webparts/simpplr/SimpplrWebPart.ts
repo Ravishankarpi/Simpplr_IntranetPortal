@@ -12,6 +12,8 @@ import OneCarousel from './components/oneCarousel/OneCarousel';
 import { IOneCarouselProps } from './components/oneCarousel/IOneCarouselProps';
 import PersonalizedCompanyNews, { IPersonalizedCompanyNewsProps } from './components/personalizedCompanyNews/PersonalizedCompanyNews';
 import PersonalizedCompanyCalendar, { IPersonalizedCompanyCalendarProps } from './components/personalizedCompanyCalendar/PersonalizedCompanyCalendar';
+import Celebrations from './components/Celebrations/Celebrations';
+import { ICelebrationsProps } from './components/Celebrations/ICelebrationsProps';
 import { getSP } from '../../shared/pnpjsConfig';
 import './SimpplrWebPart.module.scss';
 
@@ -20,6 +22,7 @@ export interface ISimpplrWebPartProps {
   carouselTitle?: string;
   newsTitle?: string;
   calendarTitle?: string;
+  celebrationsTitle?: string;
 }
 
 export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPartProps> {
@@ -49,6 +52,12 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         calendarTitle: this.properties.calendarTitle || 'Personalized Company Calendar'
       };
       element = React.createElement(PersonalizedCompanyCalendar, calendarProps);
+    } else if (normalizedTitle === 'celebrations') {
+      const celebrationsProps: ICelebrationsProps = {
+        context: this.context,
+        title: this.properties.celebrationsTitle || 'Celebrations'
+      };
+      element = React.createElement(Celebrations, celebrationsProps);
     } else {
       // Fallback display when title does not match an existing component
       element = React.createElement(
@@ -68,8 +77,8 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           'p',
           { style: { margin: 0 } },
           this.properties.title
-            ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
-            : 'Please configure the web part by entering "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
+            ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
+            : 'Please configure the web part by entering "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
         )
       );
     }
@@ -127,7 +136,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         groupFields: [
           PropertyPaneTextField('title', {
             label: strings.TitleFieldLabel,
-            description: 'Enter component name to load (e.g. "oneCarousel", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
+            description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
           })
         ]
       }
@@ -161,6 +170,16 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('calendarTitle', {
             label: 'Calendar Title',
             description: 'Heading displayed above the calendar widget'
+          })
+        ]
+      });
+    } else if (normalizedTitle === 'celebrations') {
+      groups.push({
+        groupName: 'Celebrations Settings',
+        groupFields: [
+          PropertyPaneTextField('celebrationsTitle', {
+            label: 'Celebrations Title',
+            description: 'Heading displayed above the Celebrations section'
           })
         ]
       });
