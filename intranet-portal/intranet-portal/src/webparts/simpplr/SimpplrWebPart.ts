@@ -14,6 +14,8 @@ import PersonalizedCompanyNews, { IPersonalizedCompanyNewsProps } from './compon
 import PersonalizedCompanyCalendar, { IPersonalizedCompanyCalendarProps } from './components/personalizedCompanyCalendar/PersonalizedCompanyCalendar';
 import Celebrations from './components/Celebrations/Celebrations';
 import { ICelebrationsProps } from './components/Celebrations/ICelebrationsProps';
+import SocialCampaigns from './components/SocialCampaigns/SocialCampaigns';
+import { ISocialCampaignsProps } from './components/SocialCampaigns/ISocialCampaignsProps';
 import { getSP } from '../../shared/pnpjsConfig';
 import './SimpplrWebPart.module.scss';
 
@@ -23,6 +25,7 @@ export interface ISimpplrWebPartProps {
   newsTitle?: string;
   calendarTitle?: string;
   celebrationsTitle?: string;
+  socialCampaignsTitle?: string;
 }
 
 export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPartProps> {
@@ -58,6 +61,12 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         title: this.properties.celebrationsTitle || 'Celebrations'
       };
       element = React.createElement(Celebrations, celebrationsProps);
+    } else if (normalizedTitle === 'socialcampaigns') {
+      const socialProps: ISocialCampaignsProps = {
+        context: this.context,
+        title: this.properties.socialCampaignsTitle || 'Social campaigns'
+      };
+      element = React.createElement(SocialCampaigns, socialProps);
     } else {
       // Fallback display when title does not match an existing component
       element = React.createElement(
@@ -73,13 +82,13 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           }
         },
         React.createElement('h3', { style: { margin: '0 0 8px 0', color: '#0078d4' } }, 'Simpplr Web Part'),
-        React.createElement(
-          'p',
-          { style: { margin: 0 } },
-          this.properties.title
-            ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
-            : 'Please configure the web part by entering "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
-        )
+        // React.createElement(
+        //   'p',
+        //   { style: { margin: 0 } },
+        //   this.properties.title
+        //     ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
+        //     : 'Please configure the web part by entering "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
+        // )
       );
     }
 
@@ -136,7 +145,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         groupFields: [
           PropertyPaneTextField('title', {
             label: strings.TitleFieldLabel,
-            description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
+            description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
           })
         ]
       }
@@ -180,6 +189,16 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('celebrationsTitle', {
             label: 'Celebrations Title',
             description: 'Heading displayed above the Celebrations section'
+          })
+        ]
+      });
+    } else if (normalizedTitle === 'socialcampaigns') {
+      groups.push({
+        groupName: 'Social Campaigns Settings',
+        groupFields: [
+          PropertyPaneTextField('socialCampaignsTitle', {
+            label: 'Social Campaigns Title',
+            description: 'Heading displayed above the Social Campaigns section'
           })
         ]
       });
