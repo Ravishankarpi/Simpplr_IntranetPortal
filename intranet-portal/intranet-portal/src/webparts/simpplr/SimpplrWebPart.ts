@@ -145,7 +145,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         groupFields: [
           PropertyPaneTextField('title', {
             label: strings.TitleFieldLabel,
-            description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
+            // description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
           })
         ]
       }
