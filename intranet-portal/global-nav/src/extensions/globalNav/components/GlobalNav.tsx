@@ -34,6 +34,54 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
     recent: true
   });
 
+  // Synchronize SPPageChrome and layout offset with sidebar drawer state
+  React.useEffect(() => {
+    const offset = isDrawerOpen ? 296 : 56;
+
+    document.body.classList.toggle('simpplr-nav-expanded', isDrawerOpen);
+    document.body.classList.toggle('simpplr-nav-collapsed', !isDrawerOpen);
+
+    const applyOffset = (): void => {
+      // Ensure simpplr-global-nav-host is placed directly before SPPageChrome in DOM
+      const host = document.getElementById('simpplr-global-nav-host');
+      const spChrome =
+        document.getElementById('SPPageChrome') ||
+        document.querySelector('.SPPageChrome') ||
+        document.querySelector('[id*="SPPageChrome"]');
+
+      if (host && spChrome && spChrome.parentNode && host.nextSibling !== spChrome) {
+        spChrome.parentNode.insertBefore(host, spChrome);
+      }
+
+      // Shift SPPageChrome and any sub-containers rightwards
+      const targets = document.querySelectorAll(
+        '#SPPageChrome, .SPPageChrome, [id*="SPPageChrome"], #spoAppComponent, .spoAppComponentFlex'
+      );
+      targets.forEach((el: Element) => {
+        const htmlEl = el as HTMLElement;
+        htmlEl.style.setProperty('margin-left', `${offset}px`, 'important');
+        htmlEl.style.setProperty('width', `calc(100% - ${offset}px)`, 'important');
+        htmlEl.style.setProperty('max-width', `calc(100% - ${offset}px)`, 'important');
+        htmlEl.style.setProperty(
+          'transition',
+          'margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1)',
+          'important'
+        );
+        htmlEl.style.setProperty('box-sizing', 'border-box', 'important');
+      });
+    };
+
+    applyOffset();
+
+    const t1 = setTimeout(applyOffset, 150);
+    const t2 = setTimeout(applyOffset, 600);
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+    };
+  }, [isDrawerOpen]);
+
   // Fetch or ensure SharePoint navigation list and data on mount
   React.useEffect(() => {
     let isMounted = true;

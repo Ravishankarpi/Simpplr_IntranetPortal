@@ -15,11 +15,10 @@ export interface IGlobalNavApplicationCustomizerProperties {
 /**
  * GlobalNavApplicationCustomizer
  *
- * Injects a dual-layer Sidebar Navigation (Far-left Dark Rail + Expanded Menu Drawer)
- * into a dedicated fixed container on document.body.
- *
- * Honors ROOT_SITE_URL configuration:
- * Only activates when running on ROOT_SITE_URL (or when ENABLE_GLOBAL_ACROSS_TENANT is true).
+ * Places simpplr-global-nav-host directly before SPPageChrome in the DOM.
+ * Applies margin-left to SPPageChrome so the entire SharePoint UI is on the right side.
+ * - Expanded: 296px margin-left
+ * - Collapsed: 56px margin-left
  */
 export default class GlobalNavApplicationCustomizer
   extends BaseApplicationCustomizer<IGlobalNavApplicationCustomizerProperties> {
@@ -55,12 +54,21 @@ export default class GlobalNavApplicationCustomizer
   private _renderSidebar(): void {
     const containerId = 'simpplr-global-nav-host';
 
-    // Ensure singleton container
     let container = document.getElementById(containerId) as HTMLDivElement;
     if (!container) {
       container = document.createElement('div');
       container.id = containerId;
-      document.body.appendChild(container);
+
+      const spChrome =
+        document.getElementById('SPPageChrome') ||
+        document.querySelector('.SPPageChrome') ||
+        document.querySelector('[id*="SPPageChrome"]');
+
+      if (spChrome && spChrome.parentNode) {
+        spChrome.parentNode.insertBefore(container, spChrome);
+      } else {
+        document.body.insertBefore(container, document.body.firstChild);
+      }
     }
     this._domContainer = container;
 
@@ -76,20 +84,47 @@ export default class GlobalNavApplicationCustomizer
 
   private _adjustPageLayout(): void {
     const styleId = 'simpplr-global-nav-body-offset';
-    if (!document.getElementById(styleId)) {
-      const styleEl = document.createElement('style');
+    let styleEl = document.getElementById(styleId) as HTMLStyleElement;
+    if (!styleEl) {
+      styleEl = document.createElement('style');
       styleEl.id = styleId;
       styleEl.type = 'text/css';
-      styleEl.innerHTML = `
-        body.simpplr-nav-active #workbenchPageContent,
-        body.simpplr-nav-active #spPageCanvasContent {
-          margin-left: 56px !important;
-          transition: margin-left 0.25s ease;
-        }
-      `;
       document.head.appendChild(styleEl);
     }
+
+    styleEl.innerHTML = `
+      #SPPageChrome,
+      .SPPageChrome,
+      [id*="SPPageChrome"],
+      #spoAppComponent,
+      .spoAppComponentFlex {
+        transition: margin-left 0.25s cubic-bezier(0.4, 0, 0.2, 1), width 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-sizing: border-box !important;
+      }
+
+      body.simpplr-nav-expanded #SPPageChrome,
+      body.simpplr-nav-expanded .SPPageChrome,
+      body.simpplr-nav-expanded [id*="SPPageChrome"],
+      body.simpplr-nav-expanded #spoAppComponent,
+      body.simpplr-nav-expanded .spoAppComponentFlex {
+        margin-left: 296px !important;
+        width: calc(100% - 296px) !important;
+        max-width: calc(100% - 296px) !important;
+      }
+
+      body.simpplr-nav-collapsed #SPPageChrome,
+      body.simpplr-nav-collapsed .SPPageChrome,
+      body.simpplr-nav-collapsed [id*="SPPageChrome"],
+      body.simpplr-nav-collapsed #spoAppComponent,
+      body.simpplr-nav-collapsed .spoAppComponentFlex {
+        margin-left: 56px !important;
+        width: calc(100% - 56px) !important;
+        max-width: calc(100% - 56px) !important;
+      }
+    `;
+
     document.body.classList.add('simpplr-nav-active');
+    document.body.classList.add('simpplr-nav-expanded');
   }
 
   protected onDispose(): void {
@@ -101,6 +136,10 @@ export default class GlobalNavApplicationCustomizer
       }
       this._domContainer = null;
     }
-    document.body.classList.remove('simpplr-nav-active');
+    document.body.classList.remove('simpplr-nav-active', 'simpplr-nav-expanded', 'simpplr-nav-collapsed');
+    const styleEl = document.getElementById('simpplr-global-nav-body-offset');
+    if (styleEl && styleEl.parentNode) {
+      styleEl.parentNode.removeChild(styleEl);
+    }
   }
 }
