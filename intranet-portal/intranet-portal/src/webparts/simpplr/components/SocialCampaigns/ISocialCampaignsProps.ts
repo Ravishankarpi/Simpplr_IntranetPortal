@@ -20,4 +20,8 @@ export interface ISocialCampaignsProps {
   context?: WebPartContext;
   title?: string;
   data?: ISocialCampaignItem[];
+  itemCount?: number;
+  showSeeMore?: boolean;
+  seeMoreUrl?: string;
 }
+

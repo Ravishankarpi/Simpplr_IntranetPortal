@@ -6,6 +6,9 @@ import {
   createTheme,
   ThemeProvider
 } from '@mui/material';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import {
   IPersonalizedCompanyCalendarItem,
   upcomingCalendarData,
@@ -16,6 +19,9 @@ import styles from './PersonalizedCompanyCalendar.module.scss';
 export interface IPersonalizedCompanyCalendarProps {
   context: WebPartContext;
   calendarTitle?: string;
+  itemCount?: number;
+  showSeeMore?: boolean;
+  seeMoreUrl?: string;
 }
 
 const muiTheme = createTheme({
@@ -47,13 +53,38 @@ export const PersonalizedCompanyCalendar: React.FC<IPersonalizedCompanyCalendarP
   props: IPersonalizedCompanyCalendarProps
 ): JSX.Element => {
   const [activeTab, setActiveTab] = React.useState<'upcoming' | 'popular'>('upcoming');
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
 
   const currentItems: IPersonalizedCompanyCalendarItem[] =
     activeTab === 'upcoming' ? upcomingCalendarData : popularCalendarData;
 
+  const effectiveItemCount: number =
+    props.itemCount !== undefined && props.itemCount > 0 ? props.itemCount : 4;
+  const shouldShowSeeMore: boolean = props.showSeeMore !== false;
+  const hasExternalUrl: boolean = Boolean(
+    props.seeMoreUrl && props.seeMoreUrl.trim() !== '' && props.seeMoreUrl !== '#'
+  );
+
+  // Sliced items according to itemCount and isExpanded state
+  const displayedItems: IPersonalizedCompanyCalendarItem[] =
+    isExpanded || (!shouldShowSeeMore && props.itemCount === undefined)
+      ? currentItems
+      : currentItems.slice(0, effectiveItemCount);
+
+  const hasHiddenItems: boolean = currentItems.length > effectiveItemCount;
+  const renderSeeMoreButton: boolean = shouldShowSeeMore && (hasHiddenItems || hasExternalUrl);
+
   const handleItemClick = (item: IPersonalizedCompanyCalendarItem): void => {
     if (item.url && item.url !== '#') {
       window.open(item.url, '_blank');
+    }
+  };
+
+  const handleSeeMoreClick = (): void => {
+    if (hasExternalUrl) {
+      window.open(props.seeMoreUrl, '_blank');
+    } else {
+      setIsExpanded((prev: boolean): boolean => !prev);
     }
   };
 
@@ -72,7 +103,10 @@ export const PersonalizedCompanyCalendar: React.FC<IPersonalizedCompanyCalendarP
             role="tab"
             aria-selected={activeTab === 'upcoming'}
             className={`${styles.tabButton} ${activeTab === 'upcoming' ? styles.tabActive : ''}`}
-            onClick={(): void => setActiveTab('upcoming')}
+            onClick={(): void => {
+              setActiveTab('upcoming');
+              setIsExpanded(false);
+            }}
           >
             Upcoming
           </button>
@@ -81,7 +115,10 @@ export const PersonalizedCompanyCalendar: React.FC<IPersonalizedCompanyCalendarP
             role="tab"
             aria-selected={activeTab === 'popular'}
             className={`${styles.tabButton} ${activeTab === 'popular' ? styles.tabActive : ''}`}
-            onClick={(): void => setActiveTab('popular')}
+            onClick={(): void => {
+              setActiveTab('popular');
+              setIsExpanded(false);
+            }}
           >
             Popular
           </button>
@@ -89,7 +126,7 @@ export const PersonalizedCompanyCalendar: React.FC<IPersonalizedCompanyCalendarP
 
         {/* Calendar Events List */}
         <Box className={styles.listSection}>
-          {currentItems.map((item: IPersonalizedCompanyCalendarItem): JSX.Element => (
+          {displayedItems.map((item: IPersonalizedCompanyCalendarItem): JSX.Element => (
             <Box
               key={item.id}
               className={styles.eventRow}
@@ -114,6 +151,41 @@ export const PersonalizedCompanyCalendar: React.FC<IPersonalizedCompanyCalendarP
             </Box>
           ))}
         </Box>
+
+        {/* See More Button at Bottom */}
+        {renderSeeMoreButton && (
+          <Box className={styles.seeMoreContainer}>
+            <button
+              type="button"
+              className={styles.seeMoreButton}
+              onClick={handleSeeMoreClick}
+              aria-label={
+                hasExternalUrl
+                  ? 'See more calendar events'
+                  : isExpanded
+                  ? 'See less calendar events'
+                  : 'See more calendar events'
+              }
+            >
+              {hasExternalUrl ? (
+                <>
+                  <span>See more</span>
+                  <OpenInNewIcon sx={{ fontSize: 16 }} />
+                </>
+              ) : isExpanded ? (
+                <>
+                  <span>See less</span>
+                  <ExpandLessIcon sx={{ fontSize: 18 }} />
+                </>
+              ) : (
+                <>
+                  <span>See more</span>
+                  <ExpandMoreIcon sx={{ fontSize: 18 }} />
+                </>
+              )}
+            </button>
+          </Box>
+        )}
       </Box>
     </ThemeProvider>
   );

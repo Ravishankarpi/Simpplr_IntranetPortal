@@ -212,3 +212,41 @@
     gap: 7px;
   }
 }
+
+.seeMoreContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 12px;
+  margin-top: 4px;
+  border-top: 1px solid #f0f0f0;
+}
+
+.seeMoreButton {
+  background: none;
+  border: none;
+  color: #0078d4;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 14px;
+  border-radius: 4px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  transition: all 0.15s ease;
+  font-family: inherit;
+
+  &:hover {
+    color: #106ebe;
+    background-color: #f3f8fc;
+    text-decoration: underline;
+  }
+
+  &:focus {
+    outline: 2px solid #0078d4;
+    outline-offset: 1px;
+  }
+}
+

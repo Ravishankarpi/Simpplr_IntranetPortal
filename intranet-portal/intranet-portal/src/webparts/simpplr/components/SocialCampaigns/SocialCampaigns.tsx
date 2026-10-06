@@ -12,6 +12,9 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import ArticleIcon from '@mui/icons-material/Article';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import OpenInNewIcon from '@mui/icons-material/OpenInNew';
 import { ISocialCampaignsProps, ISocialCampaignItem } from './ISocialCampaignsProps';
 import { mockSocialCampaigns } from './mockData';
 import styles from './SocialCampaigns.module.scss';
@@ -36,6 +39,7 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
   props: ISocialCampaignsProps
 ): JSX.Element => {
   const [activeTab, setActiveTab] = React.useState<'latest' | 'popular'>('latest');
+  const [isExpanded, setIsExpanded] = React.useState<boolean>(false);
   const [imageErrorMap, setImageErrorMap] = React.useState<{ [key: string]: boolean }>({});
   const [snackbarOpen, setSnackbarOpen] = React.useState<boolean>(false);
   const [snackbarMessage, setSnackbarMessage] = React.useState<string>('');
@@ -44,6 +48,21 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
   const currentItems: ISocialCampaignItem[] = allItems.filter(
     (item: ISocialCampaignItem): boolean => item.category === activeTab
   );
+
+  const effectiveItemCount: number =
+    props.itemCount !== undefined && props.itemCount > 0 ? props.itemCount : 3;
+  const shouldShowSeeMore: boolean = props.showSeeMore !== false;
+  const hasExternalUrl: boolean = Boolean(
+    props.seeMoreUrl && props.seeMoreUrl.trim() !== '' && props.seeMoreUrl !== '#'
+  );
+
+  const displayedItems: ISocialCampaignItem[] =
+    isExpanded || (!shouldShowSeeMore && props.itemCount === undefined)
+      ? currentItems
+      : currentItems.slice(0, effectiveItemCount);
+
+  const hasHiddenItems: boolean = currentItems.length > effectiveItemCount;
+  const renderSeeMoreButton: boolean = shouldShowSeeMore && (hasHiddenItems || hasExternalUrl);
 
   const handleImageError = (id: string): void => {
     setImageErrorMap((prev: { [key: string]: boolean }): { [key: string]: boolean } => ({
@@ -65,6 +84,14 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
     }
   };
 
+  const handleSeeMoreClick = (): void => {
+    if (hasExternalUrl) {
+      window.open(props.seeMoreUrl, '_blank');
+    } else {
+      setIsExpanded((prev: boolean): boolean => !prev);
+    }
+  };
+
   return (
     <ThemeProvider theme={muiTheme}>
       <Box className={styles.container}>
@@ -80,7 +107,10 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
             role="tab"
             aria-selected={activeTab === 'latest'}
             className={`${styles.tabButton} ${activeTab === 'latest' ? styles.tabActive : ''}`}
-            onClick={(): void => setActiveTab('latest')}
+            onClick={(): void => {
+              setActiveTab('latest');
+              setIsExpanded(false);
+            }}
           >
             Latest
           </button>
@@ -89,7 +119,10 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
             role="tab"
             aria-selected={activeTab === 'popular'}
             className={`${styles.tabButton} ${activeTab === 'popular' ? styles.tabActive : ''}`}
-            onClick={(): void => setActiveTab('popular')}
+            onClick={(): void => {
+              setActiveTab('popular');
+              setIsExpanded(false);
+            }}
           >
             Popular
           </button>
@@ -97,7 +130,7 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
 
         {/* Vertical List of Social Campaign Cards */}
         <Box className={styles.campaignList}>
-          {currentItems.map((item: ISocialCampaignItem): JSX.Element => {
+          {displayedItems.map((item: ISocialCampaignItem): JSX.Element => {
             const hasError: boolean = !!imageErrorMap[item.id];
 
             return (
@@ -184,6 +217,41 @@ export const SocialCampaigns: React.FC<ISocialCampaignsProps> = (
             );
           })}
         </Box>
+
+        {/* See More Button at Bottom */}
+        {renderSeeMoreButton && (
+          <Box className={styles.seeMoreContainer}>
+            <button
+              type="button"
+              className={styles.seeMoreButton}
+              onClick={handleSeeMoreClick}
+              aria-label={
+                hasExternalUrl
+                  ? 'See more social campaigns'
+                  : isExpanded
+                  ? 'See less social campaigns'
+                  : 'See more social campaigns'
+              }
+            >
+              {hasExternalUrl ? (
+                <>
+                  <span>See more</span>
+                  <OpenInNewIcon sx={{ fontSize: 16 }} />
+                </>
+              ) : isExpanded ? (
+                <>
+                  <span>See less</span>
+                  <ExpandLessIcon sx={{ fontSize: 18 }} />
+                </>
+              ) : (
+                <>
+                  <span>See more</span>
+                  <ExpandMoreIcon sx={{ fontSize: 18 }} />
+                </>
+              )}
+            </button>
+          </Box>
+        )}
 
         {/* Share Action Feedback Snackbar */}
         <Snackbar

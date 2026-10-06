@@ -76,6 +76,32 @@ export const mockSocialCampaigns: ISocialCampaignItem[] = [
     },
     category: 'latest'
   },
+  {
+    id: '4b',
+    excerpt: 'Key strategies for fostering collaboration in remote teams...',
+    title: 'Top 5 Hybrid Workplace Collaboration Strategies',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=300&q=80',
+    url: '#',
+    shares: {
+      facebook: 3,
+      twitter: 1,
+      linkedin: 8
+    },
+    category: 'latest'
+  },
+  {
+    id: '4c',
+    excerpt: 'Insights into modern employee wellness and engagement initiatives...',
+    title: 'Building a Culture of Recognition and Well-Being',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=300&q=80',
+    url: '#',
+    shares: {
+      facebook: 5,
+      twitter: 2,
+      linkedin: 12
+    },
+    category: 'latest'
+  },
   // Items for "popular" tab
   {
     id: '5',
@@ -128,5 +154,32 @@ export const mockSocialCampaigns: ISocialCampaignItem[] = [
       linkedin: 11
     },
     category: 'popular'
+  },
+  {
+    id: '9',
+    excerpt: 'How leading enterprises align digital workplace culture with business growth...',
+    title: 'The Modern Digital Workplace Blueprint',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=300&q=80',
+    url: '#',
+    shares: {
+      facebook: 18,
+      twitter: 11,
+      linkedin: 32
+    },
+    category: 'popular'
+  },
+  {
+    id: '10',
+    excerpt: 'Practical steps for driving technology adoption and staff excitement...',
+    title: 'Transforming Employee Engagement with Purpose',
+    thumbnailUrl: 'https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=300&q=80',
+    url: '#',
+    shares: {
+      facebook: 21,
+      twitter: 9,
+      linkedin: 28
+    },
+    category: 'popular'
   }
 ];
+

@@ -34,11 +34,31 @@ const ITEMS_PER_PAGE: number = 3;
 
 export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProps): JSX.Element => {
   const [currentPage, setCurrentPage] = React.useState<number>(0);
+  const [isPaused, setIsPaused] = React.useState<boolean>(false);
   const items: ICarouselItem[] = mockCarouselItems;
+
+  const autoPlay: boolean = props.autoPlay !== false;
+  const intervalSeconds: number =
+    props.interval !== undefined && props.interval > 0 ? props.interval : 5;
 
   const totalPages: number = Math.max(1, Math.ceil(items.length / ITEMS_PER_PAGE));
   const startIndex: number = currentPage * ITEMS_PER_PAGE;
   const visibleItems: ICarouselItem[] = items.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+  // Auto-slide effect based on configured timeframe (default 5 seconds)
+  React.useEffect((): (() => void) | void => {
+    if (!autoPlay || isPaused || totalPages <= 1) {
+      return;
+    }
+
+    const timer: number = window.setInterval((): void => {
+      setCurrentPage((prev: number): number => (prev + 1) % totalPages);
+    }, intervalSeconds * 1000);
+
+    return (): void => {
+      window.clearInterval(timer);
+    };
+  }, [autoPlay, isPaused, totalPages, intervalSeconds]);
 
   const isPrevDisabled: boolean = currentPage === 0;
   const isNextDisabled: boolean = currentPage >= totalPages - 1;
@@ -46,12 +66,16 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
   const handlePrev = (): void => {
     if (!isPrevDisabled) {
       setCurrentPage((prev: number): number => prev - 1);
+    } else {
+      setCurrentPage(totalPages - 1);
     }
   };
 
   const handleNext = (): void => {
     if (!isNextDisabled) {
       setCurrentPage((prev: number): number => prev + 1);
+    } else {
+      setCurrentPage(0);
     }
   };
 
@@ -63,7 +87,11 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
 
   return (
     <ThemeProvider theme={muiTheme}>
-      <Box className={styles.oneCarouselContainer}>
+      <Box
+        className={styles.oneCarouselContainer}
+        onMouseEnter={(): void => setIsPaused(true)}
+        onMouseLeave={(): void => setIsPaused(false)}
+      >
         {props.title && (
           <Typography
             variant="h5"

@@ -4,7 +4,9 @@ import { Version } from '@microsoft/sp-core-library';
 import {
   type IPropertyPaneConfiguration,
   type IPropertyPaneGroup,
-  PropertyPaneTextField
+  PropertyPaneTextField,
+  PropertyPaneSlider,
+  PropertyPaneToggle
 } from '@microsoft/sp-property-pane';
 import { BaseClientSideWebPart } from '@microsoft/sp-webpart-base';
 import * as strings from 'SimpplrWebPartStrings';
@@ -22,10 +24,21 @@ import './SimpplrWebPart.module.scss';
 export interface ISimpplrWebPartProps {
   title: string;
   carouselTitle?: string;
+  carouselInterval?: number;
+  carouselAutoPlay?: boolean;
   newsTitle?: string;
+  newsItemCount?: number;
+  newsShowSeeMore?: boolean;
+  newsSeeMoreUrl?: string;
   calendarTitle?: string;
+  calendarItemCount?: number;
+  calendarShowSeeMore?: boolean;
+  calendarSeeMoreUrl?: string;
   celebrationsTitle?: string;
   socialCampaignsTitle?: string;
+  socialCampaignsItemCount?: number;
+  socialCampaignsShowSeeMore?: boolean;
+  socialCampaignsSeeMoreUrl?: string;
 }
 
 export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPartProps> {
@@ -40,19 +53,27 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
     if (normalizedTitle === 'onecarousel') {
       const carouselProps: IOneCarouselProps = {
         title: this.properties.carouselTitle,
-        context: this.context
+        context: this.context,
+        autoPlay: this.properties.carouselAutoPlay !== false,
+        interval: this.properties.carouselInterval !== undefined ? this.properties.carouselInterval : 5
       };
       element = React.createElement(OneCarousel, carouselProps);
     } else if (normalizedTitle === 'personalizedcompanynews') {
       const newsProps: IPersonalizedCompanyNewsProps = {
         context: this.context,
-        newsTitle: this.properties.newsTitle || 'Personalized Company News'
+        newsTitle: this.properties.newsTitle || 'Personalized Company News',
+        itemCount: this.properties.newsItemCount !== undefined ? this.properties.newsItemCount : 4,
+        showSeeMore: this.properties.newsShowSeeMore !== false,
+        seeMoreUrl: this.properties.newsSeeMoreUrl
       };
       element = React.createElement(PersonalizedCompanyNews, newsProps);
     } else if (normalizedTitle === 'personalizedcompanycalendar') {
       const calendarProps: IPersonalizedCompanyCalendarProps = {
         context: this.context,
-        calendarTitle: this.properties.calendarTitle || 'Personalized Company Calendar'
+        calendarTitle: this.properties.calendarTitle || 'Personalized Company Calendar',
+        itemCount: this.properties.calendarItemCount !== undefined ? this.properties.calendarItemCount : 4,
+        showSeeMore: this.properties.calendarShowSeeMore !== false,
+        seeMoreUrl: this.properties.calendarSeeMoreUrl
       };
       element = React.createElement(PersonalizedCompanyCalendar, calendarProps);
     } else if (normalizedTitle === 'celebrations') {
@@ -64,7 +85,10 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
     } else if (normalizedTitle === 'socialcampaigns') {
       const socialProps: ISocialCampaignsProps = {
         context: this.context,
-        title: this.properties.socialCampaignsTitle || 'Social campaigns'
+        title: this.properties.socialCampaignsTitle || 'Social campaigns',
+        itemCount: this.properties.socialCampaignsItemCount !== undefined ? this.properties.socialCampaignsItemCount : 3,
+        showSeeMore: this.properties.socialCampaignsShowSeeMore !== false,
+        seeMoreUrl: this.properties.socialCampaignsSeeMoreUrl
       };
       element = React.createElement(SocialCampaigns, socialProps);
     } else {
@@ -81,14 +105,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
             color: '#333333'
           }
         },
-        React.createElement('h3', { style: { margin: '0 0 8px 0', color: '#0078d4' } }, 'Simpplr Web Part'),
-        // React.createElement(
-        //   'p',
-        //   { style: { margin: 0 } },
-        //   this.properties.title
-        //     ? `No component matching "${this.properties.title}". Please set Title to "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar" in the property pane.`
-        //     : 'Please configure the web part by entering "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar" as the Title in the property pane.'
-        // )
+        React.createElement('h3', { style: { margin: '0 0 8px 0', color: '#0078d4' } }, 'Simpplr Web Part')
       );
     }
 
@@ -144,8 +161,7 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         groupName: strings.BasicGroupName,
         groupFields: [
           PropertyPaneTextField('title', {
-            label: strings.TitleFieldLabel,
-            // description: 'Enter component name to load (e.g. "oneCarousel", "celebrations", "socialCampaigns", "personalizedCompanyNews", or "personalizedCompanyCalendar")'
+            label: strings.TitleFieldLabel
           })
         ]
       }
@@ -159,6 +175,18 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('carouselTitle', {
             label: 'Display Title',
             description: 'Optional heading displayed above the carousel'
+          }),
+          PropertyPaneToggle('carouselAutoPlay', {
+            label: 'Enable Auto-Rotation',
+            checked: this.properties.carouselAutoPlay !== false
+          }),
+          PropertyPaneSlider('carouselInterval', {
+            label: 'Rotation Timeframe (seconds)',
+            min: 1,
+            max: 60,
+            step: 1,
+            value: this.properties.carouselInterval !== undefined ? this.properties.carouselInterval : 5,
+            showValue: true
           })
         ]
       });
@@ -169,6 +197,22 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('newsTitle', {
             label: 'News Title',
             description: 'Heading displayed above the news feed'
+          }),
+          PropertyPaneSlider('newsItemCount', {
+            label: 'Number of Items to Display',
+            min: 1,
+            max: 20,
+            step: 1,
+            value: this.properties.newsItemCount !== undefined ? this.properties.newsItemCount : 4,
+            showValue: true
+          }),
+          PropertyPaneToggle('newsShowSeeMore', {
+            label: 'Display "See more" Button',
+            checked: this.properties.newsShowSeeMore !== false
+          }),
+          PropertyPaneTextField('newsSeeMoreUrl', {
+            label: '"See more" Link URL',
+            description: 'Optional destination URL (opens in new tab) or leave empty to expand items in place'
           })
         ]
       });
@@ -179,6 +223,22 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('calendarTitle', {
             label: 'Calendar Title',
             description: 'Heading displayed above the calendar widget'
+          }),
+          PropertyPaneSlider('calendarItemCount', {
+            label: 'Number of Items to Display',
+            min: 1,
+            max: 20,
+            step: 1,
+            value: this.properties.calendarItemCount !== undefined ? this.properties.calendarItemCount : 4,
+            showValue: true
+          }),
+          PropertyPaneToggle('calendarShowSeeMore', {
+            label: 'Display "See more" Button',
+            checked: this.properties.calendarShowSeeMore !== false
+          }),
+          PropertyPaneTextField('calendarSeeMoreUrl', {
+            label: '"See more" Link URL',
+            description: 'Optional destination URL (opens in new tab) or leave empty to expand items in place'
           })
         ]
       });
@@ -199,6 +259,22 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('socialCampaignsTitle', {
             label: 'Social Campaigns Title',
             description: 'Heading displayed above the Social Campaigns section'
+          }),
+          PropertyPaneSlider('socialCampaignsItemCount', {
+            label: 'Number of Items to Display',
+            min: 1,
+            max: 20,
+            step: 1,
+            value: this.properties.socialCampaignsItemCount !== undefined ? this.properties.socialCampaignsItemCount : 3,
+            showValue: true
+          }),
+          PropertyPaneToggle('socialCampaignsShowSeeMore', {
+            label: 'Display "See more" Button',
+            checked: this.properties.socialCampaignsShowSeeMore !== false
+          }),
+          PropertyPaneTextField('socialCampaignsSeeMoreUrl', {
+            label: '"See more" Link URL',
+            description: 'Optional destination URL (opens in new tab) or leave empty to expand items in place'
           })
         ]
       });
@@ -216,3 +292,4 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
     };
   }
 }
+

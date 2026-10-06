@@ -11,4 +11,7 @@ export interface ICarouselItem {
 export interface IOneCarouselProps {
   title?: string;
   context?: WebPartContext;
+  autoPlay?: boolean;
+  interval?: number; // Timeframe in seconds (default: 5)
 }
+

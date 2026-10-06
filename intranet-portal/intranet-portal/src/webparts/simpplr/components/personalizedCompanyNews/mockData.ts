@@ -59,6 +59,26 @@ export const latestNewsData: IPersonalizedCompanyNewsItem[] = [
     url: '#',
     date: 'Sep 22, 2022',
     isFeatured: false
+  },
+  {
+    id: 'l6',
+    title: 'Diversity in Leadership: Our Commitment',
+    category: 'DE&I',
+    contentType: 'PAGE',
+    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80',
+    url: '#',
+    date: 'Sep 15, 2022',
+    isFeatured: false
+  },
+  {
+    id: 'l7',
+    title: 'Sustainability Milestones: Solar Energy Transition',
+    category: 'Operations',
+    contentType: 'PAGE',
+    imageUrl: 'https://images.unsplash.com/photo-1508873696983-2df5703bc20d?auto=format&fit=crop&w=600&q=80',
+    url: '#',
+    date: 'Sep 8, 2022',
+    isFeatured: false
   }
 ];
 
@@ -102,5 +122,26 @@ export const popularNewsData: IPersonalizedCompanyNewsItem[] = [
     url: '#',
     date: 'Oct 1, 2022',
     isFeatured: false
+  },
+  {
+    id: 'p5',
+    title: 'Remote Collaboration Best Practices & Toolkits',
+    category: 'Productivity',
+    contentType: 'PAGE',
+    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
+    url: '#',
+    date: 'Sep 25, 2022',
+    isFeatured: false
+  },
+  {
+    id: 'p6',
+    title: 'New Health and Wellbeing Subsidy Program',
+    category: 'People Team',
+    contentType: 'PAGE',
+    imageUrl: 'https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?auto=format&fit=crop&w=600&q=80',
+    url: '#',
+    date: 'Sep 18, 2022',
+    isFeatured: false
   }
 ];
+

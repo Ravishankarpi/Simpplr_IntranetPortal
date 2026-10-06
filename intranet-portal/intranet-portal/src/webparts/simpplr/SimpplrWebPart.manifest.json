@@ -16,7 +16,15 @@
     "officeFabricIconFontName": "WebAppBuilderModule",
     "properties": {
       "title": "oneCarousel",
-      "carouselTitle": ""
+      "carouselTitle": "",
+      "carouselAutoPlay": true,
+      "carouselInterval": 5,
+      "calendarItemCount": 4,
+      "calendarShowSeeMore": true,
+      "newsItemCount": 4,
+      "newsShowSeeMore": true,
+      "socialCampaignsItemCount": 3,
+      "socialCampaignsShowSeeMore": true
     }
   }]
 }
