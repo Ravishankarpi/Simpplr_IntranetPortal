@@ -24,7 +24,7 @@ const muiTheme = createTheme({
 });
 
 export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JSX.Element => {
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(true);
+  const [isDrawerOpen, setIsDrawerOpen] = React.useState<boolean>(false);
   const [activeItemId, setActiveItemId] = React.useState<string>('p-home');
   const [sections, setSections] = React.useState<INavSection[]>(props.sections || mockNavSections);
   const [railTopItems, setRailTopItems] = React.useState<INavItem[]>(props.railItems || mockRailTopItems);
@@ -112,7 +112,7 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
   }, [props.context]);
 
   const handleToggleDrawer = (): void => {
-    setIsDrawerOpen(prev => !prev);
+    // setIsDrawerOpen(prev => !prev);
   };
 
   const handleToggleSection = (sectionId: string): void => {
@@ -136,7 +136,7 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
         <NavigationRail
           topItems={railTopItems}
           bottomItems={railBottomItems}
-          isDrawerOpen={isDrawerOpen}
+          isDrawerOpen={isDrawerOpen}////isDrawerOpen
           onToggleDrawer={handleToggleDrawer}
           activeItemId={activeItemId}
           onSelectItem={handleSelectItem}
@@ -144,7 +144,7 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
 
         {/* Expanded Navigation Drawer */}
         <NavigationDrawer
-          isOpen={isDrawerOpen}
+          isOpen={isDrawerOpen}//isDrawerOpen
           sections={sections}
           activeItemId={activeItemId}
           onSelectItem={handleSelectItem}

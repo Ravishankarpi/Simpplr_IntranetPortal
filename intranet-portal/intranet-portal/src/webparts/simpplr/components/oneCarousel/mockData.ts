@@ -1,67 +1,53 @@
 import { ICarouselItem } from './IOneCarouselProps';
+import { ROOT_SITE_URL } from '../../../../shared/Constant';
 
 export const mockCarouselItems: ICarouselItem[] = [
   {
     id: 1,
-    title: 'New employee onboarding survey',
+    title: 'Announcing an Acquisition',
     category: 'Corporate Communication',
-    imageUrl: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=1200&q=80',
-    url: '#'
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/Announcing an Acquisition.png',
+    url: '#',
+    publishedDate: 'Oct 1, 2026'
   },
   {
     id: 2,
-    title: 'Improving our employee experience',
-    category: 'San Francisco',
-    imageUrl: 'https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?auto=format&fit=crop&w=800&q=80',
-    url: '#'
+    title: 'What Makes a Good Manager?',
+    category: 'Leadership',
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/What Makes a Good Manager.png',
+    url: '#',
+    publishedDate: 'Sep 25, 2026'
   },
   {
     id: 3,
-    title: 'Regional return to work guidelines',
-    category: 'Toronto',
-    imageUrl: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=800&q=80',
-    url: '#'
+    title: 'Improving Our Employee Experience',
+    category: 'Employee Experience',
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/Improving Our Employee Experience.png',
+    url: '#',
+    publishedDate: 'Sep 18, 2026'
   },
   {
     id: 4,
-    title: 'Digital workplace modernization update',
-    category: 'Technology',
-    imageUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=1200&q=80',
-    url: '#'
+    title: 'New Rollout Initiative',
+    category: 'Corporate Communication',
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/New Rollout Initiative.png',
+    url: '#',
+    publishedDate: 'Sep 10, 2026'
   },
   {
     id: 5,
-    title: 'Quarterly leadership town hall: FY26 vision',
-    category: 'Executive Office',
-    imageUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=800&q=80',
-    url: '#'
+    title: 'AI Policies',
+    category: 'Technology',
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/AI Policies.png',
+    url: '#',
+    publishedDate: 'Sep 3, 2026'
   },
   {
     id: 6,
-    title: 'Sustainability roadmap & eco initiatives',
-    category: 'Operations',
-    imageUrl: 'https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&w=800&q=80',
-    url: '#'
-  },
-  {
-    id: 7,
-    title: 'Global hybrid work culture & best practices',
+    title: 'Company Benefits Program',
     category: 'Human Resources',
-    imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1200&q=80',
-    url: '#'
-  },
-  {
-    id: 8,
-    title: 'Security awareness: safeguarding company data',
-    category: 'Information Security',
-    imageUrl: 'https://images.unsplash.com/photo-1563986768609-322da13575f3?auto=format&fit=crop&w=800&q=80',
-    url: '#'
-  },
-  {
-    id: 9,
-    title: 'Customer success milestones & celebration',
-    category: 'Client Relations',
-    imageUrl: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=800&q=80',
-    url: '#'
+    imageUrl: ROOT_SITE_URL + '/SiteAssets/carousel/Company Benefits Program.png',
+    url: '#',
+    publishedDate: 'Aug 28, 2026'
   }
 ];

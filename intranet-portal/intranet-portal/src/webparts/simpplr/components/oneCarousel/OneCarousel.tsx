@@ -60,23 +60,21 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
     };
   }, [autoPlay, isPaused, totalPages, intervalSeconds]);
 
-  const isPrevDisabled: boolean = currentPage === 0;
-  const isNextDisabled: boolean = currentPage >= totalPages - 1;
+  const isPrevDisabled: boolean = totalPages <= 1;
+  const isNextDisabled: boolean = totalPages <= 1;
 
   const handlePrev = (): void => {
-    if (!isPrevDisabled) {
-      setCurrentPage((prev: number): number => prev - 1);
-    } else {
-      setCurrentPage(totalPages - 1);
+    if (totalPages <= 1) {
+      return;
     }
+    setCurrentPage((prev: number): number => (prev - 1 + totalPages) % totalPages);
   };
 
   const handleNext = (): void => {
-    if (!isNextDisabled) {
-      setCurrentPage((prev: number): number => prev + 1);
-    } else {
-      setCurrentPage(0);
+    if (totalPages <= 1) {
+      return;
     }
+    setCurrentPage((prev: number): number => (prev + 1) % totalPages);
   };
 
   const handleCardClick = (item: ICarouselItem): void => {
@@ -210,9 +208,13 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
                         height: 280,
                         width: '100%',
                         objectFit: 'cover',
+                        // Anchor smaller cards to the left so image text stays visible
+                        objectPosition: isFirstCard ? 'center center' : 'left center',
                         display: 'block',
                         backgroundColor: '#f3f3f3'
                       }}
+                      // MUI CardMedia sets object-fit: inherit by default; override it inline
+                      style={{ objectFit: 'cover', objectPosition: isFirstCard ? 'center center' : 'left center' }}
                     />
 
                     {/* Card Content */}
@@ -248,11 +250,12 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
                         {item.title}
                       </Typography>
 
-                      {/* Category Text: "In [Category]" */}
+                      {/* Category Text + Published Date inline: "In [Category] · [Date]" */}
                       <Box
                         sx={{
                           display: 'flex',
                           alignItems: 'center',
+                          flexWrap: 'wrap',
                           fontSize: '0.9rem',
                           color: '#424242'
                         }}
@@ -282,6 +285,29 @@ export const OneCarousel: React.FC<IOneCarouselProps> = (props: IOneCarouselProp
                         >
                           {item.category}
                         </Typography>
+                        {item.publishedDate && (
+                          <>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: 'inherit',
+                                color: '#9e9e9e',
+                                mx: 0.75
+                              }}
+                            >
+                              ·
+                            </Typography>
+                            <Typography
+                              component="span"
+                              sx={{
+                                fontSize: '0.85rem',
+                                color: '#757575'
+                              }}
+                            >
+                              {item.publishedDate}
+                            </Typography>
+                          </>
+                        )}
                       </Box>
                     </CardContent>
                   </Card>

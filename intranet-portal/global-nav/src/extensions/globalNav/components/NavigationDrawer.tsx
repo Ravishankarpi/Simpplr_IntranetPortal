@@ -79,9 +79,9 @@ export const NavigationDrawer: React.FC<INavigationDrawerProps> = (props: INavig
     }
     return colors[Math.abs(hash) % colors.length];
   };
-
   return (
     <Box
+      // eslint-disable-next-line no-constant-condition
       className={`${styles.navDrawer} ${!props.isOpen ? styles.navDrawerCollapsed : ''}`}
       role="region"
       aria-label="Expanded Navigation Menu"

@@ -6,6 +6,7 @@ export interface ICarouselItem {
   category: string;
   imageUrl: string;
   url?: string;
+  publishedDate?: string; // ISO date string or formatted date
 }
 
 export interface IOneCarouselProps {

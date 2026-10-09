@@ -43,10 +43,11 @@ export class GlobalNavigationService {
       );
       const list = ensureResult.list;
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const addFieldSafe = async (op: Promise<any>): Promise<void> => {
         try {
           await op;
-        } catch (e) {
+        } catch {
           // ignore error if field already exists
         }
       };
@@ -71,6 +72,7 @@ export class GlobalNavigationService {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private async seedDefaultItems(list: any): Promise<void> {
     const initialItems: IGlobalNavDbItem[] = [
       // Primary Drawer items
@@ -179,6 +181,7 @@ export class GlobalNavigationService {
         iconName: it.IconName,
         avatarUrl: it.AvatarUrl,
         hasChildren: !!it.HasChildren,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         category: (it.Section as any) || 'primary',
         orderNumber: it.OrderNumber || 0
       });
