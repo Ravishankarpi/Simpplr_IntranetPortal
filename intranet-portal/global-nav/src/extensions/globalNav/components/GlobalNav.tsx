@@ -6,6 +6,7 @@ import NavigationDrawer from './NavigationDrawer';
 import { mockNavSections, mockRailTopItems, mockRailBottomItems } from './mockData';
 import { GlobalNavigationService } from '../../../services/GlobalNavigationService';
 import styles from './GlobalNav.module.scss';
+import { ROOT_SITE_URL } from '../../../config/constants';
 
 const muiTheme = createTheme({
   palette: {
@@ -112,7 +113,7 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
   }, [props.context]);
 
   const handleToggleDrawer = (): void => {
-    // setIsDrawerOpen(prev => !prev);
+    setIsDrawerOpen(prev => !prev);
   };
 
   const handleToggleSection = (sectionId: string): void => {
@@ -124,8 +125,11 @@ export const GlobalNav: React.FC<IGlobalNavProps> = (props: IGlobalNavProps): JS
 
   const handleSelectItem = (item: INavItem): void => {
     setActiveItemId(item.id);
-    if (item.url && item.url !== '#' && item.url.indexOf('#/') !== 0) {
-      window.location.href = item.url;
+    if (item.url) {
+      const win = window.location;
+      const path = `${ROOT_SITE_URL}${item.url}`;
+      console.log("path ===> " + path);
+      win.href = path;
     }
   };
 

@@ -1,7 +1,7 @@
 import { INavItem, INavSection } from './IGlobalNavProps';
 
 export const mockRailTopItems: INavItem[] = [
-  { id: 'rail-home', title: 'Home', url: '/', iconName: 'Home', isActive: true },
+  { id: 'rail-home', title: 'Home', url: '', iconName: 'Home', isActive: true },
   { id: 'rail-people', title: 'People', url: '#/people', iconName: 'People' },
   { id: 'rail-wave', title: 'Recognition', url: '#/recognition', iconName: 'Wave' },
   { id: 'rail-bookmark', title: 'Bookmarks', url: '#/bookmarks', iconName: 'Bookmark' },
@@ -20,7 +20,7 @@ export const mockNavSections: INavSection[] = [
     title: '',
     collapsible: false,
     items: [
-      { id: 'p-home', title: 'Home', url: '/', iconName: 'Home', isActive: true },
+      { id: 'p-home', title: 'Home', url: '', iconName: 'Home', isActive: true },
       { id: 'p-feed', title: 'Feed', url: '#/feed', iconName: 'Feed' },
       { id: 'p-hub', title: 'My Hub', url: '#/hub', iconName: 'Hub' },
       { id: 'p-onboarding', title: 'Onboarding', url: '#/onboarding', iconName: 'Onboarding' },
@@ -36,7 +36,7 @@ export const mockNavSections: INavSection[] = [
     isExpanded: true,
     items: [
       { id: 'e-benefits', title: 'Benefits', url: '#/benefits', iconName: 'Circle', hasChildren: true },
-      { id: 'e-culture', title: 'Culture & Recogni...', url: '#/culture', iconName: 'Culture', hasChildren: true },
+      { id: 'e-culture', title: 'Culture & Recognition', url: '#/culture', iconName: 'Culture', hasChildren: true },
       { id: 'e-career', title: 'Career & Learning', url: '#/career', iconName: 'Career', hasChildren: true }
     ]
   },
@@ -55,7 +55,7 @@ export const mockNavSections: INavSection[] = [
       },
       {
         id: 'r-growth',
-        title: 'How We Grow Aga...',
+        title: 'How We Grow Up',
         url: '#/growth',
         avatarUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=100&q=80',
         iconName: 'Site'
@@ -69,7 +69,7 @@ export const mockNavSections: INavSection[] = [
       },
       {
         id: 'r-improve',
-        title: 'Improving Our Empl...',
+        title: 'Improving Our Employee Experience',
         url: '#/experience',
         avatarUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=100&q=80',
         iconName: 'Site'

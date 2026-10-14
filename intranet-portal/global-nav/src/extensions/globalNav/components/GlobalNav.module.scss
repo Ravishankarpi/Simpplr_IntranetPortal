@@ -212,3 +212,29 @@
   font-weight: 700 !important;
   flex-shrink: 0;
 }
+
+:global {
+
+  /* HIDE SHAREPOINT ELEMENTS */
+  // body #spLeftNav,
+  body #spSiteHeader,
+  // body #CommentsWrapper,
+  body #sp-appBar {
+    display: none !important;
+  }
+
+  body:not(.is-edit-mode) #spCommandBar {
+    display: none !important;
+  }
+
+  body.is-edit-mode #spCommandBar {
+    display: block !important;
+  }
+
+  body .sp-pageLayout-horizontalNav,
+  .sp-pageLayout-horizontalNav {
+    margin: 0px !important;
+    border-radius: 0px !important;
+  }
+
+}

@@ -39,17 +39,26 @@ export default class GlobalNavApplicationCustomizer
       }
     }
 
-    // Check for SharePoint page edit mode
-    const urlParams = new URLSearchParams(window.location.search);
-    const isEdit = urlParams.get('isEdit') === 'true' || urlParams.get('Mode') === 'Edit';
-    if (isEdit) {
-      console.log('[GlobalNav] Page is in Edit Mode');
-    }
+    this._checkEditMode();
+    this.context.application.navigatedEvent.add(this, this._checkEditMode);
+    window.addEventListener('popstate', this._checkEditMode);
 
     this._renderSidebar();
 
     return Promise.resolve();
   }
+
+  private _checkEditMode = (): void => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const isEdit =
+      urlParams.get('isEdit')?.toLowerCase() === 'true' ||
+      urlParams.get('Mode')?.toLowerCase() === 'edit';
+
+    document.body.classList.toggle('is-edit-mode', !!isEdit);
+    if (isEdit) {
+      console.log('[GlobalNav] Page is in Edit Mode (is-edit-mode added to body)');
+    }
+  };
 
   private _renderSidebar(): void {
     const containerId = 'simpplr-global-nav-host';
@@ -136,7 +145,8 @@ export default class GlobalNavApplicationCustomizer
       }
       this._domContainer = null;
     }
-    document.body.classList.remove('simpplr-nav-active', 'simpplr-nav-expanded', 'simpplr-nav-collapsed');
+    document.body.classList.remove('simpplr-nav-active', 'simpplr-nav-expanded', 'simpplr-nav-collapsed', 'is-edit-mode');
+    window.removeEventListener('popstate', this._checkEditMode);
     const styleEl = document.getElementById('simpplr-global-nav-body-offset');
     if (styleEl && styleEl.parentNode) {
       styleEl.parentNode.removeChild(styleEl);

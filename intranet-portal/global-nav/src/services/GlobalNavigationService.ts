@@ -76,7 +76,7 @@ export class GlobalNavigationService {
   private async seedDefaultItems(list: any): Promise<void> {
     const initialItems: IGlobalNavDbItem[] = [
       // Primary Drawer items
-      { Title: 'Home', NavUrl: '/', Section: 'primary', IconName: 'Home', OrderNumber: 1 },
+      { Title: 'Home', NavUrl: '', Section: 'primary', IconName: 'Home', OrderNumber: 1 },
       { Title: 'Feed', NavUrl: '#/feed', Section: 'primary', IconName: 'Feed', OrderNumber: 2 },
       { Title: 'My Hub', NavUrl: '#/hub', Section: 'primary', IconName: 'Hub', OrderNumber: 3 },
       { Title: 'Onboarding', NavUrl: '#/onboarding', Section: 'primary', IconName: 'Onboarding', OrderNumber: 4 },
@@ -86,7 +86,7 @@ export class GlobalNavigationService {
 
       // Explore Drawer items
       { Title: 'Benefits', NavUrl: '#/benefits', Section: 'explore', IconName: 'Circle', HasChildren: true, OrderNumber: 1 },
-      { Title: 'Culture & Recogni...', NavUrl: '#/culture', Section: 'explore', IconName: 'Culture', HasChildren: true, OrderNumber: 2 },
+      { Title: 'Culture & Recognition', NavUrl: '#/culture', Section: 'explore', IconName: 'Culture', HasChildren: true, OrderNumber: 2 },
       { Title: 'Career & Learning', NavUrl: '#/career', Section: 'explore', IconName: 'Career', HasChildren: true, OrderNumber: 3 },
 
       // Recently visited Drawer items
@@ -98,7 +98,7 @@ export class GlobalNavigationService {
         OrderNumber: 1
       },
       {
-        Title: 'How We Grow Aga...',
+        Title: 'How We Grow Again',
         NavUrl: '#/growth',
         Section: 'recent',
         AvatarUrl: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=100&q=80',
@@ -112,7 +112,7 @@ export class GlobalNavigationService {
         OrderNumber: 3
       },
       {
-        Title: 'Improving Our Empl...',
+        Title: 'Improving Our Employee Experience',
         NavUrl: '#/experience',
         Section: 'recent',
         AvatarUrl: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&w=100&q=80',
@@ -120,7 +120,7 @@ export class GlobalNavigationService {
       },
 
       // Rail Top items
-      { Title: 'Home', NavUrl: '/', Section: 'rail-top', IconName: 'Home', OrderNumber: 1 },
+      { Title: 'Home', NavUrl: '', Section: 'rail-top', IconName: 'Home', OrderNumber: 1 },
       { Title: 'People', NavUrl: '#/people', Section: 'rail-top', IconName: 'People', OrderNumber: 2 },
       { Title: 'Recognition', NavUrl: '#/recognition', Section: 'rail-top', IconName: 'Wave', OrderNumber: 3 },
       { Title: 'Bookmarks', NavUrl: '#/bookmarks', Section: 'rail-top', IconName: 'Bookmark', OrderNumber: 4 },
