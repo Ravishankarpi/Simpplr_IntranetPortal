@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState } from 'react';
-import { TextField, PrimaryButton, DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from '@fluentui/react';
+import { TextField, PrimaryButton, DefaultButton, Checkbox, Dropdown, IDropdownOption, DetailsList, DetailsListLayoutMode, IColumn, SelectionMode } from '@fluentui/react';
 import { spfi, SPFx } from "@pnp/sp";
 import "@pnp/sp/webs";
 import "@pnp/sp/lists";
@@ -8,7 +8,7 @@ import "@pnp/sp/items";
 import "@pnp/sp/fields";
 import "@pnp/sp/views";
 import { WebPartContext } from '@microsoft/sp-webpart-base';
-import { salesforceConfig } from '../../../config/salesforceConfig';
+import { salesforceConfig, IDateFilterConfig } from '../../../config/salesforceConfig';
 
 export interface ISalesforceMigrationProps {
   context: WebPartContext;
@@ -18,10 +18,12 @@ interface IColumnMapping {
   sfColumn: string;
   spColumn: string;
   spType: 'Text' | 'MultilineText';
+  includeInView?: boolean;
 }
 
 export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) => {
   const [objectApiName, setObjectApiName] = useState<string>('');
+  const [selectedDateFilter, setSelectedDateFilter] = useState<string>(salesforceConfig.defaultDateFilter || 'all');
   const [listName, setListName] = useState<string>('');
   const [columnMappings, setColumnMappings] = useState<IColumnMapping[]>([]);
   const [records, setRecords] = useState<any[]>([]);
@@ -29,6 +31,26 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
   const [isMigrating, setIsMigrating] = useState<boolean>(false);
   const [statusMessage, setStatusMessage] = useState<string>('');
   const [totalCount, setTotalCount] = useState<number | null>(null);
+
+  const getSelectedFilterOption = (): IDateFilterConfig | undefined => {
+    return (salesforceConfig.dateFilterOptions || []).find(o => o.key === selectedDateFilter);
+  };
+
+  const getSelectedFilterLabel = (): string => {
+    return getSelectedFilterOption()?.text || 'All Days';
+  };
+
+  const getFilterClause = (): string => {
+    const option = getSelectedFilterOption();
+    if (!option || option.days === null || option.days === undefined || option.days <= 0) {
+      return '';
+    }
+    const d = new Date();
+    d.setDate(d.getDate() - option.days);
+    d.setUTCHours(0, 0, 0, 0);
+    const isoDate = d.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    return `CreatedDate >= ${isoDate}`;
+  };
 
 
   const sp = spfi().using(SPFx(props.context));
@@ -85,10 +107,13 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       return;
     }
 
-    setStatusMessage("Fetching total record count...");
+    const filterLabel = getSelectedFilterLabel();
+    setStatusMessage(`Fetching total record count (${filterLabel})...`);
     try {
       const token = await getSalesforceToken();
-      const query = `SELECT count() FROM ${objectApiName}`;
+      const filterClause = getFilterClause();
+      const wherePart = filterClause ? ` WHERE ${filterClause}` : '';
+      const query = `SELECT count() FROM ${objectApiName}${wherePart}`;
       const url = `${salesforceConfig.apiUrl}/services/data/v66.0/query/?q=${encodeURIComponent(query)}`;
       const response = await fetch(url, {
         method: 'GET',
@@ -98,7 +123,7 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       const data = await response.json();
       const count = data.totalSize ?? data.records?.length ?? 0;
       setTotalCount(count);
-      setStatusMessage(`Total records for ${objectApiName}: ${count}`);
+      setStatusMessage(`Total records for ${objectApiName} (${filterLabel}): ${count}`);
     } catch (err) {
       console.error(err);
       setStatusMessage(`Error fetching count: ${err.message || err}`);
@@ -111,8 +136,9 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       return;
     }
 
+    const filterLabel = getSelectedFilterLabel();
     setIsAnalyzing(true);
-    setStatusMessage("Analyzing object...");
+    setStatusMessage(`Analyzing object (${filterLabel})...`);
 
     try {
       const token = await getSalesforceToken();
@@ -125,9 +151,13 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       if (!describeRes.ok) throw new Error(`Failed to fetch object metadata: ${describeRes.statusText}`);
       const describeData = await describeRes.json();
       const fieldNames = describeData.fields.map((f: any) => f.name);
+      const hasCreatedDate = fieldNames.some((f: string) => f.toLowerCase() === 'createddate');
 
-      setStatusMessage("Fetching all records...");
-      const query = `SELECT ${fieldNames.join(',')} FROM ${objectApiName} ORDER BY CreatedDate DESC LIMIT 200`; // TODO: Remove LIMIT 200 after testing;
+      setStatusMessage(`Fetching records (${filterLabel})...`);
+      const filterClause = getFilterClause();
+      const wherePart = filterClause && hasCreatedDate ? ` WHERE ${filterClause}` : '';
+      const orderPart = hasCreatedDate ? ' ORDER BY CreatedDate DESC' : '';
+      const query = `SELECT ${fieldNames.join(',')} FROM ${objectApiName}${wherePart}${orderPart}`;
       const url = `${salesforceConfig.apiUrl}/services/data/v66.0/query/?q=${encodeURIComponent(query)}`;
 
       const allRecords = await fetchSalesforceData(token, url);
@@ -152,17 +182,17 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
           const spType = maxLength > 255 ? 'MultilineText' : 'Text';
 
           if (key.toLowerCase() === 'id') {
-            mappings.push({ sfColumn: key, spColumn: `${objectApiName.replace(/__c$/, '')}_id`, spType: 'Text' });
+            mappings.push({ sfColumn: key, spColumn: `${objectApiName.replace(/__c$/, '')}_id`, spType: 'Text', includeInView: false });
           } else if (key.indexOf('Simpplr') === 0) {
-            mappings.push({ sfColumn: key, spColumn: key, spType });
+            mappings.push({ sfColumn: key, spColumn: key, spType, includeInView: false });
           }
         });
 
         setColumnMappings(mappings);
         setListName(`${objectApiName}_Migration`);
-        setStatusMessage(`Analysis complete. Found ${allRecords.length} records.`);
+        setStatusMessage(`Analysis complete. Found ${allRecords.length} records (${filterLabel}).`);
       } else {
-        setStatusMessage("No records found in Salesforce for this object.");
+        setStatusMessage(`No records found in Salesforce for this object (${filterLabel}).`);
       }
     } catch (error) {
       console.error(error);
@@ -175,6 +205,18 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
   const handleColumnNameChange = (sfColumn: string, newSpColumn: string) => {
     setColumnMappings(prev =>
       prev.map(m => m.sfColumn === sfColumn ? { ...m, spColumn: newSpColumn } : m)
+    );
+  };
+
+  const handleToggleIncludeInView = (sfColumn: string, checked: boolean) => {
+    setColumnMappings(prev =>
+      prev.map(m => m.sfColumn === sfColumn ? { ...m, includeInView: checked } : m)
+    );
+  };
+
+  const handleSelectAllForView = (selectAll: boolean) => {
+    setColumnMappings(prev =>
+      prev.map(m => ({ ...m, includeInView: selectAll }))
     );
   };
 
@@ -228,15 +270,15 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
         }
       }
 
-      // Add fields to default view
+      // Add selected fields to default view
+      setStatusMessage("Configuring SharePoint List View with selected columns...");
       const view = list.defaultView;
-      for (const mapping of columnMappings) {
-        if (mapping.spColumn.toLowerCase() !== 'title') {
-          try {
-            await view.fields.add(spFieldInternalNames[mapping.spColumn] || mapping.spColumn);
-          } catch (viewErr) {
-            // Ignore if already exists in view
-          }
+      const selectedViewMappings = columnMappings.filter(m => m.includeInView && m.spColumn.toLowerCase() !== 'title');
+      for (const mapping of selectedViewMappings) {
+        try {
+          await view.fields.add(spFieldInternalNames[mapping.spColumn] || mapping.spColumn);
+        } catch (viewErr) {
+          console.warn(`Field ${mapping.spColumn} might already exist in view or error:`, viewErr);
         }
       }
 
@@ -286,7 +328,7 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
         }
       }
 
-      setStatusMessage(`Migration complete! Successfully migrated ${successCount} records. ${errorCount} failures logged to ${auditListName}.`);
+      setStatusMessage(`Migration complete! Successfully migrated ${successCount} records. ${selectedViewMappings.length} column(s) added to default list view. ${errorCount} failures logged to ${auditListName}.`);
     } catch (error) {
       console.error(error);
       setStatusMessage(`Error during migration: ${error.message || error}`);
@@ -300,37 +342,81 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       key: 'sfColumn',
       name: 'Salesforce Column',
       fieldName: 'sfColumn',
-      minWidth: 150,
-      maxWidth: 250,
+      minWidth: 160,
+      maxWidth: 240,
       isResizable: true
     },
     {
       key: 'spColumn',
       name: 'SharePoint Column (Editable)',
       fieldName: 'spColumn',
-      minWidth: 150,
-      maxWidth: 250,
+      minWidth: 180,
+      maxWidth: 260,
       isResizable: true,
       onRender: (item: IColumnMapping) => (
         <TextField
           value={item.spColumn}
           onChange={(e, val) => handleColumnNameChange(item.sfColumn, val || '')}
+          disabled={isMigrating}
+        />
+      )
+    },
+    {
+      key: 'includeInView',
+      name: 'Include in List View',
+      fieldName: 'includeInView',
+      minWidth: 150,
+      maxWidth: 180,
+      isResizable: true,
+      onRenderHeader: () => {
+        const allSelected = columnMappings.length > 0 && columnMappings.every(m => m.includeInView);
+        const someSelected = columnMappings.some(m => m.includeInView);
+        return (
+          <Checkbox
+            label="Include in View"
+            checked={allSelected}
+            indeterminate={someSelected && !allSelected}
+            onChange={(e, checked) => handleSelectAllForView(!!checked)}
+            disabled={isMigrating}
+          />
+        );
+      },
+      onRender: (item: IColumnMapping) => (
+        <Checkbox
+          label="Include in View"
+          checked={!!item.includeInView}
+          onChange={(e, checked) => handleToggleIncludeInView(item.sfColumn, !!checked)}
+          disabled={isMigrating}
         />
       )
     }
   ];
 
+  const dateFilterDropdownOptions: IDropdownOption[] = (salesforceConfig.dateFilterOptions || []).map(opt => ({
+    key: opt.key,
+    text: opt.text
+  }));
+
   return (
     <div style={{ padding: '20px', fontFamily: 'Segoe UI, sans-serif' }}>
       <h2>Salesforce to SharePoint Migration</h2>
 
-      <div style={{ display: 'flex', gap: '10px', alignItems: 'flex-end', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-end', marginBottom: '20px', flexWrap: 'wrap' }}>
         <TextField
           label="Salesforce Object API Name"
           value={objectApiName}
           onChange={(e, val) => setObjectApiName(val || '')}
           disabled={isAnalyzing || isMigrating}
+          styles={{ root: { minWidth: 260 } }}
         />
+        {/* <Dropdown
+          label="Date Filter"
+          selectedKey={selectedDateFilter}
+          options={dateFilterDropdownOptions}
+          onChange={(e, option) => option && setSelectedDateFilter(String(option.key))}
+          disabled={isAnalyzing || isMigrating}
+          styles={{ root: { minWidth: 160 } }}
+        /> */}
         <PrimaryButton
           text="Get Total Count"
           onClick={handleGetCount}
@@ -350,7 +436,7 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
       )}
       {totalCount !== null && (
         <div style={{ margin: '10px 0', padding: '10px', backgroundColor: '#e0f7fa' }}>
-          Total records: {totalCount}
+          Total records for {objectApiName} ({getSelectedFilterLabel()}): {totalCount}
         </div>
       )}
 
@@ -363,6 +449,24 @@ export const SalesforceMigration: React.FC<ISalesforceMigrationProps> = (props) 
             disabled={isMigrating}
             style={{ marginBottom: '20px' }}
           />
+
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+            <div style={{ fontWeight: 600, color: '#323130' }}>
+              Columns Mapping ({columnMappings.filter(m => m.includeInView).length} of {columnMappings.length} selected for List View)
+            </div>
+            <div style={{ display: 'flex', gap: '8px' }}>
+              <DefaultButton
+                text="Select All for View"
+                onClick={() => handleSelectAllForView(true)}
+                disabled={isMigrating}
+              />
+              <DefaultButton
+                text="Deselect All"
+                onClick={() => handleSelectAllForView(false)}
+                disabled={isMigrating}
+              />
+            </div>
+          </div>
 
           <DetailsList
             items={columnMappings}

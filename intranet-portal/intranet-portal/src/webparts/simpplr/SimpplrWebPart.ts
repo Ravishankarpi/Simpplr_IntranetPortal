@@ -18,6 +18,8 @@ import Celebrations from './components/Celebrations/Celebrations';
 import { ICelebrationsProps } from './components/Celebrations/ICelebrationsProps';
 import SocialCampaigns from './components/SocialCampaigns/SocialCampaigns';
 import { ISocialCampaignsProps } from './components/SocialCampaigns/ISocialCampaignsProps';
+import NewHiresSpotlight from './components/NewHiresSpotlight/NewHiresSpotlight';
+import { INewHiresSpotlightProps } from './components/NewHiresSpotlight/INewHiresSpotlightProps';
 import { getSP } from '../../shared/pnpjsConfig';
 import './SimpplrWebPart.module.scss';
 
@@ -35,6 +37,7 @@ export interface ISimpplrWebPartProps {
   calendarShowSeeMore?: boolean;
   calendarSeeMoreUrl?: string;
   celebrationsTitle?: string;
+  newHiresSpotlightTitle?: string;
   socialCampaignsTitle?: string;
   socialCampaignsItemCount?: number;
   socialCampaignsShowSeeMore?: boolean;
@@ -91,6 +94,12 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
         seeMoreUrl: this.properties.socialCampaignsSeeMoreUrl
       };
       element = React.createElement(SocialCampaigns, socialProps);
+    } else if (normalizedTitle === 'newhiresspotlight' || normalizedTitle === 'welcomenewhires') {
+      const newHiresProps: INewHiresSpotlightProps = {
+        context: this.context,
+        title: this.properties.newHiresSpotlightTitle || 'Welcome New Hires!'
+      };
+      element = React.createElement(NewHiresSpotlight, newHiresProps);
     } else {
       // Fallback display when title does not match an existing component
       element = React.createElement(
@@ -275,6 +284,16 @@ export default class SimpplrWebPart extends BaseClientSideWebPart<ISimpplrWebPar
           PropertyPaneTextField('socialCampaignsSeeMoreUrl', {
             label: '"See more" Link URL',
             description: 'Optional destination URL (opens in new tab) or leave empty to expand items in place'
+          })
+        ]
+      });
+    } else if (normalizedTitle === 'newhiresspotlight' || normalizedTitle === 'welcomenewhires') {
+      groups.push({
+        groupName: 'New Hires Spotlight Settings',
+        groupFields: [
+          PropertyPaneTextField('newHiresSpotlightTitle', {
+            label: 'Display Title',
+            description: 'Heading displayed above the New Hires section'
           })
         ]
       });

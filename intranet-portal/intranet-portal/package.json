@@ -11,6 +11,7 @@
     "package": "gulp package-solution --ship",
     "clean": "gulp clean",
     "serve": "gulp serve --nobrowser --max-old-space-size=8000",
+    "proxy": "node scripts/cors-proxy.js",
     "test": "gulp test",
     "i": "npm i -f",
     "trust": "gulp trust-dev-cert"
